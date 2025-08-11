@@ -6,6 +6,8 @@ import http.server
 import socketserver
 import os
 import mimetypes
+import socket
+import subprocess
 from urllib.parse import urlparse
 
 class FarmAppHandler(http.server.SimpleHTTPRequestHandler):
@@ -45,13 +47,11 @@ class FarmAppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', content_type)
             
-            # Add PWA headers - disable caching for development
-            if path.endswith('.html') or path.endswith('.js') or path.endswith('.css'):
-                self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                self.send_header('Pragma', 'no-cache')
-                self.send_header('Expires', '0')
-            else:
-                self.send_header('Cache-Control', 'public, max-age=31536000')
+            # Force no caching for all files during development
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
+            self.send_header('Last-Modified', 'Thu, 01 Jan 1970 00:00:00 GMT')
             
             # CORS headers for local development
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -82,8 +82,16 @@ def run_server(port=5000):
     httpd = None
     
     try:
+        # Kill any existing processes on this port first
+        import subprocess
+        try:
+            subprocess.run(['pkill', '-f', 'python.*server'], check=False, capture_output=True)
+        except:
+            pass
+        
         httpd = socketserver.TCPServer(("0.0.0.0", port), handler)
         httpd.allow_reuse_address = True
+        httpd.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         print(f"🌾 Farm Management PWA Server running on http://0.0.0.0:{port}")
         print("Press Ctrl+C to stop the server")
         httpd.serve_forever()
@@ -91,7 +99,12 @@ def run_server(port=5000):
         print("\nServer stopped.")
     except OSError as e:
         if e.errno == 98:  # Address already in use
-            print(f"Port {port} is busy. Please stop other services using this port.")
+            print(f"Port {port} is busy. Attempting to clear...")
+            try:
+                subprocess.run(['pkill', '-9', '-f', 'python.*server'], check=False)
+                print("Cleared existing processes. Please restart.")
+            except:
+                print("Could not clear port. Manual intervention required.")
         else:
             print(f"Error starting server: {e}")
     finally:
