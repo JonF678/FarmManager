@@ -7,6 +7,7 @@ This is a comprehensive farm management platform built with Streamlit that provi
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Color scheme: #345187 (RGB: 52, 81, 135) - Applied throughout the entire app for consistent branding.
 
 ## System Architecture
 

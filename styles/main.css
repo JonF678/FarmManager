@@ -1,8 +1,8 @@
 /* Main PWA Styles */
 :root {
-    --primary-color: #2c5530;
-    --secondary-color: #4a7c59;
-    --accent-color: #6b9b7c;
+    --primary-color: #345187;
+    --secondary-color: rgba(52, 81, 135, 0.8);
+    --accent-color: rgba(52, 81, 135, 0.6);
     --background-color: #f5f7f5;
     --text-color: #333;
     --border-color: #ddd;

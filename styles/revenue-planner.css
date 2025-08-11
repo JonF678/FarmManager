@@ -1,8 +1,8 @@
 /* Management Tracker Styles */
 :root {
-    --primary-color: #2e7d32;
-    --primary-light: #66bb6a;
-    --primary-dark: #1b5e20;
+    --primary-color: #345187;
+    --primary-light: rgba(52, 81, 135, 0.8);
+    --primary-dark: rgb(42, 65, 110);
     --secondary-color: #f4f4f4;
     --accent-color: #ff9800;
     --text-color: #333;
