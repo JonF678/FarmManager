@@ -45,9 +45,11 @@ class FarmAppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', content_type)
             
-            # Add PWA headers
-            if path.endswith('.html'):
-                self.send_header('Cache-Control', 'no-cache')
+            # Add PWA headers - disable caching for development
+            if path.endswith('.html') or path.endswith('.js') or path.endswith('.css'):
+                self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                self.send_header('Pragma', 'no-cache')
+                self.send_header('Expires', '0')
             else:
                 self.send_header('Cache-Control', 'public, max-age=31536000')
             
@@ -77,31 +79,24 @@ class FarmAppHandler(http.server.SimpleHTTPRequestHandler):
 def run_server(port=5000):
     """Run the HTTP server"""
     handler = FarmAppHandler
-    
-    # Try ports starting from the preferred port
-    for attempt_port in range(port, port + 10):
-        try:
-            httpd = socketserver.TCPServer(("0.0.0.0", attempt_port), handler)
-            httpd.allow_reuse_address = True
-            break
-        except OSError as e:
-            if e.errno == 98:  # Address already in use
-                print(f"Port {attempt_port} is busy, trying next port...")
-                continue
-            else:
-                raise
-    else:
-        print(f"Could not find an available port in range {port}-{port+9}")
-        return
+    httpd = None
     
     try:
-        print(f"🌾 Farm Management PWA Server running on http://0.0.0.0:{attempt_port}")
+        httpd = socketserver.TCPServer(("0.0.0.0", port), handler)
+        httpd.allow_reuse_address = True
+        print(f"🌾 Farm Management PWA Server running on http://0.0.0.0:{port}")
         print("Press Ctrl+C to stop the server")
         httpd.serve_forever()
     except KeyboardInterrupt:
         print("\nServer stopped.")
+    except OSError as e:
+        if e.errno == 98:  # Address already in use
+            print(f"Port {port} is busy. Please stop other services using this port.")
+        else:
+            print(f"Error starting server: {e}")
     finally:
-        httpd.server_close()
+        if httpd:
+            httpd.server_close()
 
 if __name__ == "__main__":
     run_server()
