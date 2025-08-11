@@ -99,4 +99,6 @@ def run_server(port=5000):
             httpd.server_close()
 
 if __name__ == "__main__":
-    run_server()
+    import sys
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 5000
+    run_server(port)
