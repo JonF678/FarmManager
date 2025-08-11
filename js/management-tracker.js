@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeNavigation();
     initializeForms();
     initializeFilters();
+    initializeChartFilters();
     updateDashboard();
     renderAllTables();
     populateYearFilters();
@@ -308,6 +309,9 @@ function handleSoilSubmit(e) {
 
     saveData();
     renderTable('soil');
+    updateDashboard();
+    initializeMoistureChart(); // Update the moisture chart
+    populateYearFilters(); // Update all filter dropdowns
     e.target.reset();
     cancelEdit();
 }
@@ -605,6 +609,7 @@ function initializeCharts() {
     initializeIncomeExpenseChart();
     initializeExpenseBreakdownChart();
     initializeProductionChart();
+    initializeMoistureChart();
 }
 
 function initializeIncomeExpenseChart() {
@@ -739,7 +744,7 @@ function initializeProductionChart() {
             datasets: [{
                 label: 'Activity Count',
                 data: counts,
-                backgroundColor: '#2e7d32'
+                backgroundColor: '#345187'
             }]
         },
         options: {
@@ -755,6 +760,129 @@ function initializeProductionChart() {
             }
         }
     });
+}
+
+function initializeMoistureChart() {
+    const ctx = document.getElementById('moistureChart');
+    if (!ctx) return;
+
+    // Destroy existing chart
+    if (charts.moisture) {
+        charts.moisture.destroy();
+    }
+
+    // Get filter values
+    const cropFilter = document.getElementById('moisture-crop-filter')?.value || '';
+    const fieldFilter = document.getElementById('moisture-field-filter')?.value || '';
+
+    // Filter soil data
+    let filteredData = farmData.soilTestRecords;
+    
+    if (cropFilter) {
+        filteredData = filteredData.filter(record => record.crop === cropFilter);
+    }
+    
+    if (fieldFilter) {
+        filteredData = filteredData.filter(record => record.field === fieldFilter);
+    }
+
+    // Sort by date
+    filteredData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Prepare chart data
+    const labels = filteredData.map(record => {
+        const date = new Date(record.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+    
+    const moistureData = filteredData.map(record => parseFloat(record.moisture));
+
+    charts.moisture = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Moisture Level (%)',
+                data: moistureData,
+                borderColor: '#345187',
+                backgroundColor: 'rgba(52, 81, 135, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        afterLabel: function(context) {
+                            const record = filteredData[context.dataIndex];
+                            return [
+                                `Field: ${record.field}`,
+                                `Crop: ${record.crop || 'N/A'}`,
+                                `pH: ${record.ph}`,
+                                `Humidity: ${record.humidity}%`
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Update filter dropdowns
+    updateMoistureFilters();
+}
+
+function updateMoistureFilters() {
+    const cropFilter = document.getElementById('moisture-crop-filter');
+    const fieldFilter = document.getElementById('moisture-field-filter');
+    
+    if (cropFilter) {
+        const crops = [...new Set(farmData.soilTestRecords.map(r => r.crop).filter(Boolean))];
+        const currentCrop = cropFilter.value;
+        cropFilter.innerHTML = '<option value="">All Crops</option>';
+        crops.forEach(crop => {
+            cropFilter.innerHTML += `<option value="${crop}">${crop}</option>`;
+        });
+        cropFilter.value = currentCrop;
+    }
+    
+    if (fieldFilter) {
+        const fields = [...new Set(farmData.soilTestRecords.map(r => r.field).filter(Boolean))];
+        const currentField = fieldFilter.value;
+        fieldFilter.innerHTML = '<option value="">All Fields</option>';
+        fields.forEach(field => {
+            fieldFilter.innerHTML += `<option value="${field}">${field}</option>`;
+        });
+        fieldFilter.value = currentField;
+    }
+}
+
+function initializeChartFilters() {
+    // Add event listeners for moisture chart filters
+    const cropFilter = document.getElementById('moisture-crop-filter');
+    const fieldFilter = document.getElementById('moisture-field-filter');
+    
+    if (cropFilter) {
+        cropFilter.addEventListener('change', initializeMoistureChart);
+    }
+    
+    if (fieldFilter) {
+        fieldFilter.addEventListener('change', initializeMoistureChart);
+    }
 }
 
 // Utility functions
