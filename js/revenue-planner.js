@@ -307,18 +307,24 @@ class RevenuePlanner {
         const plantingDate = document.getElementById('planting-date').value;
         const acresUsed = parseFloat(document.getElementById('acres-used').value);
         
-        console.log('Adding crop entry:', { cropName, plantingDate, acresUsed });
-        console.log('Available crops:', this.cropData.map(c => c.name));
+        if (!cropName) {
+            alert('Please select a crop');
+            return;
+        }
         
-        if (!cropName || cropName.trim() === '') {
-            alert('Please select a crop from the dropdown');
+        if (!plantingDate) {
+            alert('Please enter a planting date');
+            return;
+        }
+        
+        if (!acresUsed || acresUsed <= 0) {
+            alert('Please enter a valid number of acres');
             return;
         }
         
         const cropInfo = this.cropData.find(crop => crop.name === cropName);
         if (!cropInfo) {
-            console.error('Crop not found:', cropName);
-            alert('Please select a valid crop from the dropdown');
+            alert('Selected crop not found in database');
             return;
         }
         
@@ -356,36 +362,14 @@ class RevenuePlanner {
         const editIndex = form ? form.dataset.editIndex : undefined;
         
         // Get form values with validation
-        const nameInput = document.getElementById('crop-name');
-        const priceInput = document.getElementById('price-per-unit');
-        const yieldInput = document.getElementById('yield-per-acre');
-        const unitInput = document.getElementById('yield-unit');
-        const transplantInput = document.getElementById('days-to-transplant');
-        const maturityInput = document.getElementById('days-to-maturity');
-        const expenseInput = document.getElementById('expense-per-acre');
-        const rotationInput = document.getElementById('rotation-group');
-        
-        console.log('Form inputs found:', {
-            name: !!nameInput,
-            price: !!priceInput,
-            yield: !!yieldInput,
-            unit: !!unitInput,
-            transplant: !!transplantInput,
-            maturity: !!maturityInput,
-            expense: !!expenseInput,
-            rotation: !!rotationInput
-        });
-        
-        const name = nameInput ? nameInput.value.trim() : '';
-        const pricePerUnit = priceInput ? parseFloat(priceInput.value) || 0 : 0;
-        const yieldPerAcre = yieldInput ? parseFloat(yieldInput.value) || 0 : 0;
-        const yieldUnit = unitInput ? unitInput.value : '';
-        const daysToTransplant = transplantInput ? parseInt(transplantInput.value) || 0 : 0;
-        const daysToMaturity = maturityInput ? parseInt(maturityInput.value) || 0 : 0;
-        const expensePerAcre = expenseInput ? parseFloat(expenseInput.value) || 0 : 0;
-        const rotationGroup = rotationInput ? rotationInput.value : '';
-        
-        console.log('Form values:', { name, pricePerUnit, yieldPerAcre, yieldUnit, daysToTransplant, daysToMaturity, expensePerAcre, rotationGroup });
+        const name = document.getElementById('crop-name').value.trim();
+        const pricePerUnit = parseFloat(document.getElementById('price-per-unit').value) || 0;
+        const yieldPerAcre = parseFloat(document.getElementById('yield-per-acre').value) || 0;
+        const yieldUnit = document.getElementById('yield-unit').value;
+        const daysToTransplant = parseInt(document.getElementById('days-to-transplant').value) || 0;
+        const daysToMaturity = parseInt(document.getElementById('days-to-maturity').value) || 0;
+        const expensePerAcre = parseFloat(document.getElementById('expense-per-acre').value) || 0;
+        const rotationGroup = document.getElementById('rotation-group').value;
         
         // Validate required fields
         if (!name) {
@@ -428,8 +412,6 @@ class RevenuePlanner {
             expensePerAcre: expensePerAcre,
             rotationGroup: rotationGroup
         };
-        
-        console.log('Saving crop data:', cropData);
         
         if (editIndex !== undefined && editIndex !== null && editIndex !== '') {
             this.cropData[parseInt(editIndex)] = cropData;
