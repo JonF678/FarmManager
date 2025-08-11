@@ -16,6 +16,10 @@ class RevenuePlanner {
         this.loadDefaultCropData();
         this.loadFromStorage();
         this.setupEventListeners();
+        
+        // Debug: Log crop data
+        console.log('Revenue Planner initialized with crop data:', this.cropData);
+        
         this.populateCropSelectors();
         this.updateAllDisplays();
         this.checkOnlineStatus();
@@ -109,6 +113,9 @@ class RevenuePlanner {
         
         if (savedCropData) {
             this.cropData = JSON.parse(savedCropData);
+        } else {
+            // If no saved crop data, use defaults
+            this.loadDefaultCropData();
         }
         
         if (savedEntries && savedEntries !== 'null') {
@@ -174,7 +181,14 @@ class RevenuePlanner {
     
     populateCropSelectors() {
         const selector = document.getElementById('crop-select');
+        if (!selector) {
+            console.error('Crop selector element not found');
+            return;
+        }
+        
         selector.innerHTML = '<option value="">Select a crop...</option>';
+        
+        console.log('Populating crop selector with:', this.cropData);
         
         this.cropData.forEach(crop => {
             const option = document.createElement('option');
@@ -182,6 +196,8 @@ class RevenuePlanner {
             option.textContent = crop.name;
             selector.appendChild(option);
         });
+        
+        console.log('Crop selector populated, total options:', selector.options.length);
     }
     
     populateYearSelectors() {
@@ -806,11 +822,15 @@ class RevenuePlanner {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.revenuePlanner = new RevenuePlanner();
-    
-    // Listen for online/offline events
-    window.addEventListener('online', () => revenuePlanner.checkOnlineStatus());
-    window.addEventListener('offline', () => revenuePlanner.checkOnlineStatus());
+    // Add delay to ensure all elements are loaded
+    setTimeout(() => {
+        console.log('Initializing Revenue Planner...');
+        window.revenuePlanner = new RevenuePlanner();
+        
+        // Listen for online/offline events
+        window.addEventListener('online', () => window.revenuePlanner.checkOnlineStatus());
+        window.addEventListener('offline', () => window.revenuePlanner.checkOnlineStatus());
+    }, 100);
 });
 
 // Service Worker registration for PWA functionality
