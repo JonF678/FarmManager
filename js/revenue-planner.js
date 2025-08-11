@@ -98,10 +98,9 @@ class RevenuePlanner {
             { name: 'Cabbage', pricePerUnit: 1.50, yieldPerAcre: 1800, yieldUnit: 'kg', daysToTransplant: 30, daysToMaturity: 90, expensePerAcre: 300, rotationGroup: 'Brassicas' }
         ];
         
-        if (!localStorage.getItem('sefake-farm-crop-data')) {
-            this.cropData = defaultCrops;
-            this.saveToStorage();
-        }
+        // Always ensure we have default crop data
+        this.cropData = defaultCrops;
+        this.saveToStorage();
     }
     
     loadFromStorage() {

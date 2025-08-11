@@ -414,13 +414,18 @@ class FarmActivityPlanner {
         const container = document.getElementById('activities-summary');
         const emptyState = document.getElementById('empty-state');
         
-        // Get activities for next 2 weeks
+        // Get activities for next 2 weeks from today
         const now = new Date();
+        now.setHours(0, 0, 0, 0); // Start of today
         const twoWeeksLater = new Date(now.getTime() + (14 * 24 * 60 * 60 * 1000));
         
         const upcomingTasks = this.tasks.filter(task => {
             const taskStart = new Date(task.startDate);
-            return taskStart >= now && taskStart <= twoWeeksLater;
+            const taskEnd = new Date(task.endDate);
+            // Include tasks that start, end, or are ongoing within the next 2 weeks
+            return (taskStart >= now && taskStart <= twoWeeksLater) || 
+                   (taskEnd >= now && taskEnd <= twoWeeksLater) ||
+                   (taskStart <= now && taskEnd >= now);
         });
 
         if (upcomingTasks.length === 0) {
