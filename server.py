@@ -78,13 +78,30 @@ def run_server(port=5000):
     """Run the HTTP server"""
     handler = FarmAppHandler
     
-    with socketserver.TCPServer(("0.0.0.0", port), handler) as httpd:
-        print(f"🌾 Farm Management PWA Server running on http://0.0.0.0:{port}")
-        print("Press Ctrl+C to stop the server")
+    # Try ports starting from the preferred port
+    for attempt_port in range(port, port + 10):
         try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nServer stopped.")
+            httpd = socketserver.TCPServer(("0.0.0.0", attempt_port), handler)
+            httpd.allow_reuse_address = True
+            break
+        except OSError as e:
+            if e.errno == 98:  # Address already in use
+                print(f"Port {attempt_port} is busy, trying next port...")
+                continue
+            else:
+                raise
+    else:
+        print(f"Could not find an available port in range {port}-{port+9}")
+        return
+    
+    try:
+        print(f"🌾 Farm Management PWA Server running on http://0.0.0.0:{attempt_port}")
+        print("Press Ctrl+C to stop the server")
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nServer stopped.")
+    finally:
+        httpd.server_close()
 
 if __name__ == "__main__":
     run_server()

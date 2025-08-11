@@ -3,564 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farm Management System</title>
+    <title>Sefake Farms - Crop Planning & Management</title>
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#2e7d32">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'%3E%3Cpath d='M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="../styles/revenue-planner.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-content">
-                <div class="logo-section">
-                    <img src="../assets/logo.svg" alt="Sefake Farms Logo" class="farm-logo">
-                    <div class="header-text">
-                        <h1>Sefake Farms</h1>
-                        <p class="tagline">Harvesting happiness, one crop at a time</p>
-                    </div>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <img src="../assets/logo.svg" alt="Sefake Farms Logo" class="farm-logo">
+                <div class="header-text">
+                    <h1>Sefake Farms - Crop Planning</h1>
+                    <p class="tagline">Harvesting happiness, one crop at a time</p>
                 </div>
-                <h2>Farm Management System</h2>
-                <button onclick="window.location.href='../index.html'" class="btn btn-secondary back-btn">← Back to Dashboard</button>
             </div>
-            <nav class="nav">
-                <button class="nav-btn active" data-section="dashboard">Dashboard</button>
-                <button class="nav-btn" data-section="production-records">Production Records</button>
-                <button class="nav-btn" data-section="production-income">Production Income</button>
-                <button class="nav-btn" data-section="production-expenses">Production Expenses</button>
-                <button class="nav-btn" data-section="employee-salaries">Employee Salaries</button>
-                <button class="nav-btn" data-section="soil-monitoring">Soil Monitoring</button>
-            </nav>
+            <div class="header-controls">
+                <button onclick="window.location.href='../index.html'" class="btn btn-secondary">← Back to Dashboard</button>
+                <div class="status-indicator">
+                    <span id="online-status" class="status-badge online">Online</span>
+                </div>
+            </div>
         </header>
 
+        <!-- Navigation Tabs -->
+        <nav class="tab-navigation">
+            <button class="tab-button active" data-tab="planner">Crop Planner</button>
+            <button class="tab-button" data-tab="crops">Crop Data</button>
+            <button class="tab-button" data-tab="rotation">Rotation</button>
+            <button class="tab-button" data-tab="financial">Financial</button>
+            <button class="tab-button" data-tab="success">Success</button>
+            <button class="tab-button" data-tab="summary">Summary</button>
+            <button class="tab-button" data-tab="charts">Charts</button>
+        </nav>
+
+        <!-- Tab Content -->
         <main class="main-content">
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="section active">
-                <h2>Dashboard Overview</h2>
+            <!-- Crop Planner Tab -->
+            <div id="planner-tab" class="tab-content active">
                 <div class="section-header">
-                    <div class="filter-controls">
-                        <label for="dashboard-year-filter">Filter by Year:</label>
-                        <select id="dashboard-year-filter">
-                            <option value="">All Years</option>
-                        </select>
-                        <label for="dashboard-season-filter">Filter by Season:</label>
-                        <select id="dashboard-season-filter">
-                            <option value="">All Seasons</option>
-                            <option value="A">Season A (Jan-Jun)</option>
-                            <option value="B">Season B (Jul-Dec)</option>
-                        </select>
-                        <label for="dashboard-field-filter">Filter by Field:</label>
-                        <select id="dashboard-field-filter">
-                            <option value="">All Fields</option>
-                        </select>
-                    </div>
+                    <h2>Crop Planning</h2>
+                    <button id="add-crop-btn" class="btn btn-primary">+ Add Crop Entry</button>
                 </div>
-                <div class="dashboard-grid">
-                    <div class="summary-card">
-                        <h3>Total Production Income</h3>
-                        <p class="summary-value" id="total-income">₵0.00</p>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Total Production Expenses</h3>
-                        <p class="summary-value" id="total-expenses">₵0.00</p>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Total Employee Salaries</h3>
-                        <p class="summary-value" id="total-salaries">₵0.00</p>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Net Income</h3>
-                        <p class="summary-value" id="net-income">₵0.00</p>
-                    </div>
-                </div>
-                <div class="charts-section">
-                    <div class="chart-container">
-                        <h3>Income vs Expenses</h3>
-                        <canvas id="incomeExpenseChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Expense Breakdown</h3>
-                        <canvas id="expenseBreakdownChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Production Overview</h3>
-                        <canvas id="productionChart"></canvas>
-                    </div>
-                </div>
-                <div class="recent-activity">
-                    <h3>Recent Activity</h3>
-                    <div id="recent-activity-list" class="activity-list">
-                        <p class="no-data">No recent activity</p>
-                    </div>
-                </div>
-            </section>
 
-            <!-- Production Records Section -->
-            <section id="production-records" class="section">
-                <h2>Production Records</h2>
-                <div class="section-header">
-                    <div class="filter-controls">
-                        <label for="year-filter">Filter by Year:</label>
-                        <select id="year-filter">
-                            <option value="">All Years</option>
-                        </select>
-                        <label for="season-filter">Filter by Season:</label>
-                        <select id="season-filter">
-                            <option value="">All Seasons</option>
-                            <option value="A">Season A (Jan-Jun)</option>
-                            <option value="B">Season B (Jul-Dec)</option>
-                        </select>
-                        <label for="field-filter">Filter by Field:</label>
-                        <select id="field-filter">
-                            <option value="">All Fields</option>
-                        </select>
-                        <button type="button" id="export-csv-btn" class="export-btn">Export to CSV</button>
-                    </div>
+                <!-- Add Crop Form -->
+                <div id="add-crop-form" class="form-container hidden">
+                    <h3>Add New Crop Entry</h3>
+                    <form id="crop-entry-form">
+                        <div class="form-group">
+                            <label for="crop-select">Crop:</label>
+                            <select id="crop-select" required>
+                                <option value="">Select a crop...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-date">Planting Date:</label>
+                            <input type="date" id="planting-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="acres-used">Acres Used:</label>
+                            <input type="number" id="acres-used" min="0.1" step="0.1" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Add Entry</button>
+                            <button type="button" id="cancel-add" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="section-content">
-                    <div class="form-container">
-                        <form id="production-form" class="data-form">
-                            <div class="form-group">
-                                <label for="prod-date">Date:</label>
-                                <input type="date" id="prod-date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="prod-activity">Activity:</label>
-                                <select id="prod-activity" required>
-                                    <option value="">Select Activity</option>
-                                    <option value="Planting">Planting</option>
-                                    <option value="Harvesting">Harvesting</option>
-                                    <option value="Fertilizing">Fertilizing</option>
-                                    <option value="Irrigation">Irrigation</option>
-                                    <option value="Pest Control">Pest Control</option>
-                                    <option value="Soil Preparation">Soil Preparation</option>
-                                    <option value="Equipment Maintenance">Equipment Maintenance</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="prod-season">Season:</label>
-                                <select id="prod-season" required>
-                                    <option value="">Select Season</option>
-                                    <option value="A">Season A (Jan-Jun)</option>
-                                    <option value="B">Season B (Jul-Dec)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="prod-field">Field:</label>
-                                <input type="text" id="prod-field" placeholder="e.g., North Field, South Field" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="prod-notes">Notes:</label>
-                                <textarea id="prod-notes" rows="2" placeholder="Brief description of the activity"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="prod-tag1">Tag:</label>
-                                <input type="text" id="prod-tag1" placeholder="e.g., Summer Crop, Winter Crop, Equipment">
-                            </div>
-                            <div class="form-group">
-                                <label for="prod-comments">Comments:</label>
-                                <textarea id="prod-comments" rows="3" placeholder="Detailed observations or additional information"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="prod-contact">Contact Number:</label>
-                                <input type="tel" id="prod-contact" placeholder="+1-xxx-xxx-xxxx">
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit">Add Record</button>
-                                <button type="button" id="cancel-prod-edit" class="cancel-btn" style="display:none;">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="table-container">
-                        <table id="production-table" class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Activity</th>
-                                    <th>Season</th>
-                                    <th>Field</th>
-                                    <th>Notes</th>
-                                    <th>Tag</th>
-                                    <th>Comments</th>
-                                    <th>Contact Number</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="production-tbody">
-                                <tr class="no-data-row">
-                                    <td colspan="9">No production records found</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
 
-            <!-- Production Income Section -->
-            <section id="production-income" class="section">
-                <h2>Production Income</h2>
-                <div class="section-header">
-                    <div class="filter-controls">
-                        <label for="income-year-filter">Filter by Year:</label>
-                        <select id="income-year-filter">
-                            <option value="">All Years</option>
-                        </select>
-                        <label for="income-season-filter">Filter by Season:</label>
-                        <select id="income-season-filter">
-                            <option value="">All Seasons</option>
-                            <option value="A">Season A (Jan-Jun)</option>
-                            <option value="B">Season B (Jul-Dec)</option>
-                        </select>
-                        <label for="income-field-filter">Filter by Field:</label>
-                        <select id="income-field-filter">
-                            <option value="">All Fields</option>
-                        </select>
-                        <button type="button" id="export-income-csv-btn" class="export-btn">Export to CSV</button>
+                <!-- Crop Entries Table -->
+                <div class="table-container">
+                    <table id="crop-entries-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Crop</th>
+                                <th>Planting Date</th>
+                                <th>Harvest Date</th>
+                                <th>Acres Used</th>
+                                <th>Yield (Planned vs Actual)</th>
+                                <th>Revenue (Planned vs Actual)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crop-entries-tbody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                    <div id="no-entries-message" class="empty-state">
+                        <p>No crop entries yet. Click "Add Crop Entry" to get started.</p>
                     </div>
                 </div>
-                <div class="section-content">
-                    <div class="form-container">
-                        <form id="income-form" class="data-form">
-                            <div class="form-group">
-                                <label for="income-date">Date:</label>
-                                <input type="date" id="income-date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-item">Item/Crop:</label>
-                                <input type="text" id="income-item" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-season">Season:</label>
-                                <select id="income-season" required>
-                                    <option value="">Select Season</option>
-                                    <option value="A">Season A (Jan-Jun)</option>
-                                    <option value="B">Season B (Jul-Dec)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-field">Field:</label>
-                                <input type="text" id="income-field" placeholder="e.g., North Field, South Field" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-quantity">Quantity Sold:</label>
-                                <input type="number" id="income-quantity" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-unit">Unit:</label>
-                                <input type="text" id="income-unit" placeholder="kg, tons, pieces" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-price">Unit Price:</label>
-                                <input type="number" id="income-price" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-total">Total Amount:</label>
-                                <input type="number" id="income-total" step="0.01" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="income-buyer">Buyer:</label>
-                                <input type="text" id="income-buyer">
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit">Add Income</button>
-                                <button type="button" id="cancel-income-edit" class="cancel-btn" style="display:none;">Cancel</button>
-                            </div>
-                        </form>
+            </div>
+
+            <!-- Crop Data Tab -->
+            <div id="crops-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Crop Database</h2>
+                    <button id="add-crop-data-btn" class="btn btn-primary">+ Add Crop</button>
+                    <button id="reset-crop-data-btn" class="btn btn-secondary">Reset to Defaults</button>
+                </div>
+
+                <!-- Add/Edit Crop Data Form -->
+                <div id="crop-data-form" class="form-container hidden">
+                    <h3 id="crop-data-form-title">Add New Crop</h3>
+                    <form id="crop-data-entry-form">
+                        <div class="form-group">
+                            <label for="crop-name">Crop Name:</label>
+                            <input type="text" id="crop-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price-per-unit">Price per Unit (₵):</label>
+                            <input type="number" id="price-per-unit" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="yield-per-acre">Yield per Acre:</label>
+                            <input type="number" id="yield-per-acre" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="yield-unit">Yield Unit:</label>
+                            <select id="yield-unit" required>
+                                <option value="">Select unit</option>
+                                <option value="kg">Kilograms (kg)</option>
+                                <option value="tons">Tons</option>
+                                <option value="baskets">Baskets</option>
+                                <option value="bags">Bags</option>
+                                <option value="crates">Crates</option>
+                                <option value="boxes">Boxes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="days-to-transplant">Days to Transplant:</label>
+                            <input type="number" id="days-to-transplant" min="0" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="days-to-maturity">Days to Maturity:</label>
+                            <input type="number" id="days-to-maturity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-per-acre">Expense per Acre (₵):</label>
+                            <input type="number" id="expense-per-acre" min="0" step="0.01" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rotation-group">Rotation Group:</label>
+                            <select id="rotation-group" required>
+                                <option value="">Select rotation group...</option>
+                                <option value="Nightshades">Nightshades</option>
+                                <option value="Leafy Greens">Leafy Greens</option>
+                                <option value="Root Vegetables">Root Vegetables</option>
+                                <option value="Legumes">Legumes</option>
+                                <option value="Cucurbits">Cucurbits</option>
+                                <option value="Grasses">Grasses</option>
+                                <option value="Alliums">Alliums</option>
+                                <option value="Brassicas">Brassicas</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Crop</button>
+                            <button type="button" id="cancel-crop-data" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Crop Data Table -->
+                <div class="table-container">
+                    <table id="crop-data-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Crop Name</th>
+                                <th>Price per Unit (₵)</th>
+                                <th>Yield per Acre</th>
+                                <th>Yield Unit</th>
+                                <th>Days to Transplant</th>
+                                <th>Days to Maturity</th>
+                                <th>Expense per Acre (₵)</th>
+                                <th>Rotation Group</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crop-data-tbody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Crop Rotation Tab -->
+            <div id="rotation-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Crop Rotation Planning</h2>
+                    <button id="generate-rotation-plan" class="btn btn-primary">Generate Rotation Plan</button>
+                </div>
+
+                <div class="rotation-container">
+                    <div class="rotation-suggestions">
+                        <h3>Rotation Recommendations</h3>
+                        <div id="rotation-suggestions-content">
+                            <p class="empty-state">Click "Generate Rotation Plan" to see crop rotation suggestions based on your entries.</p>
+                        </div>
                     </div>
-                    <div class="table-container">
-                        <table id="income-table" class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Item/Crop</th>
-                                    <th>Season</th>
-                                    <th>Field</th>
-                                    <th>Quantity</th>
-                                    <th>Unit</th>
-                                    <th>Unit Price</th>
-                                    <th>Total Amount</th>
-                                    <th>Buyer</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="income-tbody">
-                                <tr class="no-data-row">
-                                    <td colspan="10">No income records found</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="table-summary">
-                            <strong>Total Income: ₵<span id="income-summary">0.00</span></strong>
+
+                    <div class="companion-planting">
+                        <h3>Companion Planting Guide</h3>
+                        <div id="companion-planting-content">
+                            <!-- Dynamic content -->
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- Production Expenses Section -->
-            <section id="production-expenses" class="section">
-                <h2>Production Expenses</h2>
+            <!-- Financial Reporting Tab -->
+            <div id="financial-tab" class="tab-content">
                 <div class="section-header">
-                    <div class="filter-controls">
-                        <label for="expense-year-filter">Filter by Year:</label>
-                        <select id="expense-year-filter">
-                            <option value="">All Years</option>
+                    <h2>Financial Analysis</h2>
+                    <div class="year-selector">
+                        <label for="financial-year-select">Year:</label>
+                        <select id="financial-year-select">
+                            <!-- Years will be populated dynamically -->
                         </select>
-                        <label for="expense-season-filter">Filter by Season:</label>
-                        <select id="expense-season-filter">
-                            <option value="">All Seasons</option>
-                            <option value="A">Season A (Jan-Jun)</option>
-                            <option value="B">Season B (Jul-Dec)</option>
-                        </select>
-                        <label for="expense-field-filter">Filter by Field:</label>
-                        <select id="expense-field-filter">
-                            <option value="">All Fields</option>
-                        </select>
-                        <button type="button" id="export-expense-csv-btn" class="export-btn">Export to CSV</button>
                     </div>
                 </div>
-                <div class="section-content">
-                    <div class="form-container">
-                        <form id="expense-form" class="data-form">
-                            <div class="form-group">
-                                <label for="expense-date">Date:</label>
-                                <input type="date" id="expense-date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-category">Category:</label>
-                                <select id="expense-category" required>
-                                    <option value="">Select Category</option>
-                                    <option value="Seeds">Seeds</option>
-                                    <option value="Fertilizers">Fertilizers</option>
-                                    <option value="Pesticides">Pesticides</option>
-                                    <option value="Equipment">Equipment</option>
-                                    <option value="Fuel">Fuel</option>
-                                    <option value="Maintenance">Maintenance</option>
-                                    <option value="Labor">Labor</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-season">Season:</label>
-                                <select id="expense-season" required>
-                                    <option value="">Select Season</option>
-                                    <option value="A">Season A (Jan-Jun)</option>
-                                    <option value="B">Season B (Jul-Dec)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-field">Field:</label>
-                                <input type="text" id="expense-field" placeholder="e.g., North Field, South Field" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-description">Description:</label>
-                                <input type="text" id="expense-description" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-quantity">Quantity:</label>
-                                <input type="number" id="expense-quantity" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-unit-cost">Unit Cost:</label>
-                                <input type="number" id="expense-unit-cost" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-total">Total Cost:</label>
-                                <input type="number" id="expense-total" step="0.01" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="expense-supplier">Supplier:</label>
-                                <input type="text" id="expense-supplier">
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit">Add Expense</button>
-                                <button type="button" id="cancel-expense-edit" class="cancel-btn" style="display:none;">Cancel</button>
-                            </div>
-                        </form>
+
+                <div class="financial-container">
+                    <div class="financial-stats">
+                        <div class="stat-card profit-card">
+                            <h3>Total Profit</h3>
+                            <div id="total-profit" class="stat-value">₵0.00</div>
+                        </div>
+                        <div class="stat-card expense-card">
+                            <h3>Total Expenses</h3>
+                            <div id="total-expenses" class="stat-value">₵0.00</div>
+                        </div>
+                        <div class="stat-card margin-card">
+                            <h3>Average Profit Margin</h3>
+                            <div id="average-margin" class="stat-value">0%</div>
+                        </div>
+                        <div class="stat-card roi-card">
+                            <h3>Return on Investment</h3>
+                            <div id="roi" class="stat-value">0%</div>
+                        </div>
                     </div>
+
                     <div class="table-container">
-                        <table id="expense-table" class="data-table">
+                        <table id="financial-table" class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Category</th>
-                                    <th>Season</th>
-                                    <th>Field</th>
-                                    <th>Description</th>
-                                    <th>Quantity</th>
-                                    <th>Unit Cost</th>
+                                    <th>Crop</th>
+                                    <th>Planting Date</th>
+                                    <th>Acres</th>
                                     <th>Total Cost</th>
-                                    <th>Supplier</th>
-                                    <th>Actions</th>
+                                    <th>Revenue</th>
+                                    <th>Profit</th>
+                                    <th>Margin %</th>
                                 </tr>
                             </thead>
-                            <tbody id="expense-tbody">
-                                <tr class="no-data-row">
-                                    <td colspan="10">No expense records found</td>
-                                </tr>
+                            <tbody id="financial-tbody">
+                                <!-- Dynamic content -->
                             </tbody>
                         </table>
-                        <div class="table-summary">
-                            <strong>Total Expenses: ₵<span id="expense-summary">0.00</span></strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Stories Tab -->
+            <div id="success-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Success Stories</h2>
+                </div>
+                <div class="success-container">
+                    <div class="success-story">
+                        <h3>Best Performing Crops</h3>
+                        <div id="best-crops-content">
+                            <p class="empty-state">Plant some crops to see success stories here!</p>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- Employee Salaries Section -->
-            <section id="employee-salaries" class="section">
-                <h2>Employee Salaries</h2>
+            <!-- Summary Tab -->
+            <div id="summary-tab" class="tab-content">
                 <div class="section-header">
-                    <div class="filter-controls">
-                        <label for="salary-year-filter">Filter by Year:</label>
-                        <select id="salary-year-filter">
-                            <option value="">All Years</option>
-                        </select>
-                        <button type="button" id="export-salary-csv-btn" class="export-btn">Export to CSV</button>
-                    </div>
+                    <h2>Farm Summary</h2>
                 </div>
-                <div class="section-content">
-                    <div class="form-container">
-                        <form id="salary-form" class="data-form">
-                            <div class="form-group">
-                                <label for="salary-date">Date:</label>
-                                <input type="date" id="salary-date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="salary-employee">Employee Name:</label>
-                                <input type="text" id="salary-employee" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="salary-position">Position:</label>
-                                <input type="text" id="salary-position" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="salary-hours">Hours Worked:</label>
-                                <input type="number" id="salary-hours" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="salary-rate">Hourly Rate:</label>
-                                <input type="number" id="salary-rate" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="salary-overtime">Overtime Hours:</label>
-                                <input type="number" id="salary-overtime" step="0.01" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="salary-total">Total Salary:</label>
-                                <input type="number" id="salary-total" step="0.01" readonly>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit">Add Salary Record</button>
-                                <button type="button" id="cancel-salary-edit" class="cancel-btn" style="display:none;">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="table-container">
-                        <table id="salary-table" class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Employee</th>
-                                    <th>Position</th>
-                                    <th>Hours</th>
-                                    <th>Rate</th>
-                                    <th>Overtime</th>
-                                    <th>Total Salary</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="salary-tbody">
-                                <tr class="no-data-row">
-                                    <td colspan="8">No salary records found</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="table-summary">
-                            <strong>Total Salaries: ₵<span id="salary-summary">0.00</span></strong>
+                <div class="summary-container">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <h3>Total Crops Planted</h3>
+                            <div id="total-crops-planted" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Acres Used</h3>
+                            <div id="total-acres-used" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Plantings</h3>
+                            <div id="active-plantings" class="stat-value">0</div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- Soil Monitoring Section -->
-            <section id="soil-monitoring" class="section">
-                <h2>Soil Monitoring</h2>
+            <!-- Charts Tab -->
+            <div id="charts-tab" class="tab-content">
                 <div class="section-header">
-                    <div class="filter-controls">
-                        <label for="soil-year-filter">Filter by Year:</label>
-                        <select id="soil-year-filter">
-                            <option value="">All Years</option>
-                        </select>
-                        <button type="button" id="export-soil-csv-btn" class="export-btn">Export to CSV</button>
+                    <h2>Data Visualization</h2>
+                </div>
+                <div class="charts-container">
+                    <div class="chart-section">
+                        <h3>Revenue by Crop</h3>
+                        <canvas id="revenue-chart" class="chart-canvas"></canvas>
+                    </div>
+                    <div class="chart-section">
+                        <h3>Profit Margins</h3>
+                        <canvas id="profit-chart" class="chart-canvas"></canvas>
                     </div>
                 </div>
-                <div class="section-content">
-                    <div class="form-container">
-                        <form id="soil-form" class="data-form">
-                            <div class="form-group">
-                                <label for="soil-date">Test Date:</label>
-                                <input type="date" id="soil-date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-field">Field:</label>
-                                <input type="text" id="soil-field" placeholder="e.g., North Field, South Field" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-ph">pH Level:</label>
-                                <input type="number" id="soil-ph" step="0.1" min="0" max="14" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-nitrogen">Nitrogen (N) %:</label>
-                                <input type="number" id="soil-nitrogen" step="0.01" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-phosphorus">Phosphorus (P) %:</label>
-                                <input type="number" id="soil-phosphorus" step="0.01" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-potassium">Potassium (K) %:</label>
-                                <input type="number" id="soil-potassium" step="0.01" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-organic-matter">Organic Matter %:</label>
-                                <input type="number" id="soil-organic-matter" step="0.01" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-recommendations">Recommendations:</label>
-                                <textarea id="soil-recommendations" rows="3" placeholder="Fertilizer recommendations, soil amendments, etc."></textarea>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit">Add Soil Test</button>
-                                <button type="button" id="cancel-soil-edit" class="cancel-btn" style="display:none;">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="table-container">
-                        <table id="soil-table" class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Test Date</th>
-                                    <th>Field</th>
-                                    <th>pH Level</th>
-                                    <th>Nitrogen %</th>
-                                    <th>Phosphorus %</th>
-                                    <th>Potassium %</th>
-                                    <th>Organic Matter %</th>
-                                    <th>Recommendations</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="soil-tbody">
-                                <tr class="no-data-row">
-                                    <td colspan="9">No soil test records found</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+            </div>
         </main>
     </div>
 
-    <script src="../js/revenue-planner.js"></script>
+    <script src="../js/management-tracker.js"></script>
 </body>
 </html>
