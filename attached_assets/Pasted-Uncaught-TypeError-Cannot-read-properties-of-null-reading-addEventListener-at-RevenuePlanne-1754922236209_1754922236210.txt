@@ -1,0 +1,20 @@
+Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
+    at RevenuePlanner.setupEventListeners (revenue-planner.js:78:50)
+    at RevenuePlanner.init (revenue-planner.js:18:14)
+    at new RevenuePlanner (revenue-planner.js:8:14)
+    at HTMLDocument.<anonymous> (revenue-planner.html:331:30)Understand this error
+revenue-planner.js:844 Service Worker registration failed: TypeError: Failed to register a ServiceWorker: The URL protocol of the current origin ('null') is not supported.
+    at revenue-planner.js:839:33
+sw-register.js:19 Service Worker registration failed: TypeError: Failed to register a ServiceWorker: The URL protocol of the current origin ('null') is not supported.
+    at sw-register.js:5:64
+revenue-planner.js:827 Initializing Revenue Planner...
+revenue-planner.js:78 Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
+    at RevenuePlanner.setupEventListeners (revenue-planner.js:78:50)
+    at RevenuePlanner.init (revenue-planner.js:18:14)
+    at new RevenuePlanner (revenue-planner.js:8:14)
+    at revenue-planner.js:828:33Understand this error
+main.js:78 Uncaught SecurityError: Failed to execute 'pushState' on 'History': A history state object with URL 'file:///C:/#revenue-planner' cannot be created in a document with origin 'null' and URL 'file:///C:/Users/jfianu/Documents/FarmManager/index.html'.
+    at FarmManagementApp.navigateToView (main.js:78:25)
+    at HTMLButtonElement.<anonymous> (main.js:40:22)Understand this error
+index.html:1 Access to internal resource at 'file:///C:/Users/jfianu/Documents/FarmManager/manifest.json' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-extension, chrome-untrusted, data, http, https, isolated-app.Understand this error
+revenue-planner.html:1 Access to internal resource at 'file:///C:/Users/jfianu/Documents/FarmManager/manifest.json' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-extension, chrome-untrusted, data, http, https, isolated-app.Understand this error

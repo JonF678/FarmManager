@@ -38,46 +38,73 @@ class RevenuePlanner {
             });
         });
         
-        // Crop planner events
-        document.getElementById('add-crop-btn').addEventListener('click', () => {
-            this.showAddCropForm();
-        });
+        // Crop planner events - add null checks
+        const addCropBtn = document.getElementById('add-crop-btn');
+        if (addCropBtn) {
+            addCropBtn.addEventListener('click', () => {
+                this.showAddCropForm();
+            });
+        }
         
-        document.getElementById('cancel-add').addEventListener('click', () => {
-            this.hideAddCropForm();
-        });
+        const cancelAddBtn = document.getElementById('cancel-add');
+        if (cancelAddBtn) {
+            cancelAddBtn.addEventListener('click', () => {
+                this.hideAddCropForm();
+            });
+        }
         
-        document.getElementById('crop-entry-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.addCropEntry();
-        });
+        const cropEntryForm = document.getElementById('crop-entry-form');
+        if (cropEntryForm) {
+            cropEntryForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.addCropEntry();
+            });
+        }
         
-        // Crop data events
-        document.getElementById('add-crop-data-btn').addEventListener('click', () => {
-            this.showCropDataForm();
-        });
+        // Crop data events - add null checks
+        const addCropDataBtn = document.getElementById('add-crop-data-btn');
+        if (addCropDataBtn) {
+            addCropDataBtn.addEventListener('click', () => {
+                this.showCropDataForm();
+            });
+        }
         
-        document.getElementById('cancel-crop-data').addEventListener('click', () => {
-            this.hideCropDataForm();
-        });
+        const cancelCropDataBtn = document.getElementById('cancel-crop-data');
+        if (cancelCropDataBtn) {
+            cancelCropDataBtn.addEventListener('click', () => {
+                this.hideCropDataForm();
+            });
+        }
         
-        document.getElementById('crop-data-entry-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveCropData();
-        });
+        const cropDataForm = document.getElementById('crop-data-entry-form');
+        if (cropDataForm) {
+            cropDataForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveCropData();
+            });
+        }
         
-        document.getElementById('reset-crop-data-btn').addEventListener('click', () => {
-            this.resetCropData();
-        });
+        const resetCropDataBtn = document.getElementById('reset-crop-data-btn');
+        if (resetCropDataBtn) {
+            resetCropDataBtn.addEventListener('click', () => {
+                this.resetCropData();
+            });
+        }
         
-        // Other events
-        document.getElementById('generate-rotation-plan').addEventListener('click', () => {
-            this.generateRotationPlan();
-        });
+        // Other events - add null checks
+        const generateRotationBtn = document.getElementById('generate-rotation-plan');
+        if (generateRotationBtn) {
+            generateRotationBtn.addEventListener('click', () => {
+                this.generateRotationPlan();
+            });
+        }
         
-        document.getElementById('export-csv-btn').addEventListener('click', () => {
-            this.exportToCSV();
-        });
+        const exportCsvBtn = document.getElementById('export-csv-btn');
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', () => {
+                this.exportToCSV();
+            });
+        }
         
         // Year selector events
         ['financial', 'success', 'summary', 'charts'].forEach(tab => {
@@ -834,7 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Service Worker registration for PWA functionality
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('../sw.js')
             .then(registration => {
