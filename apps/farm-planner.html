@@ -15,6 +15,8 @@
             <div class="header-controls">
                 <button id="add-task-btn" class="btn btn-primary">+ Add Task</button>
                 <button id="export-csv-btn" class="btn btn-secondary">Export CSV</button>
+                <button id="print-btn" class="btn btn-secondary">Print</button>
+                <button onclick="window.location.href='../index.html'" class="btn btn-secondary">← Back to Dashboard</button>
                 <button id="dark-mode-toggle" class="btn btn-icon">🌙</button>
             </div>
         </header>
@@ -109,9 +111,32 @@
 
         <!-- Gantt Chart Container -->
         <div class="gantt-container">
+            <div class="gantt-header">
+                <h2>Crops</h2>
+                <div class="date-navigation">
+                    <button id="prev-dates" class="btn btn-icon">←</button>
+                    <span id="current-month-year"></span>
+                    <button id="next-dates" class="btn btn-icon">→</button>
+                </div>
+            </div>
+            
             <div class="gantt-wrapper">
-                <div class="gantt-chart" id="gantt-chart">
-                    <!-- Chart will be dynamically generated -->
+                <!-- Timeline Header -->
+                <div class="timeline-header">
+                    <div class="crop-header">Crops</div>
+                    <div class="dates-header" id="dates-header">
+                        <!-- Date columns will be generated dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Gantt Chart Body -->
+                <div class="gantt-body" id="gantt-body">
+                    <div class="crops-column" id="crops-column">
+                        <!-- Crop rows will be generated dynamically -->
+                    </div>
+                    <div class="timeline-grid" id="timeline-grid">
+                        <!-- Timeline grid will be generated dynamically -->
+                    </div>
                 </div>
             </div>
         </div>

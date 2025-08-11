@@ -1,7 +1,10 @@
-// Farm Planner JavaScript - Based on your original functionality
-class FarmPlanner {
+// Farm Activity Planner - Gantt Chart Implementation
+class FarmActivityPlanner {
     constructor() {
         this.tasks = this.loadTasks();
+        this.currentDate = new Date();
+        this.dateRange = this.generateDateRange();
+        this.crops = new Set();
         this.init();
     }
 
@@ -9,7 +12,36 @@ class FarmPlanner {
         this.setupEventListeners();
         this.renderGanttChart();
         this.renderUpcomingActivities();
-        this.setupDarkModeToggle();
+        this.loadSampleData(); // Add some sample data if empty
+    }
+
+    loadSampleData() {
+        if (this.tasks.length === 0) {
+            // Add sample data matching your design
+            this.tasks = [
+                {
+                    id: 1,
+                    cropName: 'tomatoes',
+                    fieldName: 'Field 1',
+                    season: 'A',
+                    activityType: 'Land preparation',
+                    startDate: '2025-08-23',
+                    duration: 10,
+                    endDate: '2025-09-01'
+                },
+                {
+                    id: 2,
+                    cropName: 'Pepper',
+                    fieldName: 'Field 2',
+                    season: 'A',
+                    activityType: 'Land preparation',
+                    startDate: '2025-08-18',
+                    duration: 10,
+                    endDate: '2025-08-27'
+                }
+            ];
+            this.saveTasks();
+        }
     }
 
     setupEventListeners() {
@@ -21,6 +53,24 @@ class FarmPlanner {
         // Export CSV button
         document.getElementById('export-csv-btn').addEventListener('click', () => {
             this.exportToCSV();
+        });
+
+        // Print button
+        document.getElementById('print-btn').addEventListener('click', () => {
+            window.print();
+        });
+
+        // Date navigation
+        document.getElementById('prev-dates').addEventListener('click', () => {
+            this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+            this.dateRange = this.generateDateRange();
+            this.renderGanttChart();
+        });
+
+        document.getElementById('next-dates').addEventListener('click', () => {
+            this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+            this.dateRange = this.generateDateRange();
+            this.renderGanttChart();
         });
 
         // Modal controls
@@ -44,6 +94,192 @@ class FarmPlanner {
                 this.hideTaskForm();
             }
         });
+    }
+
+    generateDateRange() {
+        const start = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
+        const end = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
+        
+        const dates = [];
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            dates.push(new Date(d));
+        }
+        return dates;
+    }
+
+    renderGanttChart() {
+        this.updateCurrentMonthYear();
+        this.renderTimelineHeader();
+        this.renderGanttBody();
+    }
+
+    updateCurrentMonthYear() {
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const monthYear = `${monthNames[this.currentDate.getMonth()]} ${this.currentDate.getFullYear()}`;
+        document.getElementById('current-month-year').textContent = monthYear;
+    }
+
+    renderTimelineHeader() {
+        const datesHeader = document.getElementById('dates-header');
+        datesHeader.innerHTML = '';
+
+        this.dateRange.forEach(date => {
+            const dateColumn = document.createElement('div');
+            dateColumn.className = 'date-column';
+            
+            const dayNum = date.getDate().toString().padStart(2, '0');
+            const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
+            
+            dateColumn.innerHTML = `
+                <div>${dayNum}/${monthNum}</div>
+            `;
+            datesHeader.appendChild(dateColumn);
+        });
+    }
+
+    renderGanttBody() {
+        // Get unique crops
+        this.crops = new Set(this.tasks.map(task => task.cropName));
+        
+        const cropsColumn = document.getElementById('crops-column');
+        const timelineGrid = document.getElementById('timeline-grid');
+        
+        cropsColumn.innerHTML = '';
+        timelineGrid.innerHTML = '';
+
+        if (this.crops.size === 0) {
+            // Show empty state
+            cropsColumn.innerHTML = '<div class="crop-row">No crops planned yet</div>';
+            timelineGrid.innerHTML = '<div class="timeline-row"></div>';
+            return;
+        }
+
+        // Render each crop row
+        this.crops.forEach((crop, index) => {
+            // Crop name column
+            const cropRow = document.createElement('div');
+            cropRow.className = 'crop-row';
+            cropRow.textContent = crop;
+            cropsColumn.appendChild(cropRow);
+
+            // Timeline row
+            const timelineRow = document.createElement('div');
+            timelineRow.className = 'timeline-row';
+            timelineRow.dataset.crop = crop;
+
+            // Create cells for each date
+            this.dateRange.forEach(date => {
+                const cell = document.createElement('div');
+                cell.className = 'timeline-cell';
+                cell.dataset.date = this.formatDate(date);
+                timelineRow.appendChild(cell);
+            });
+
+            // Add activities for this crop
+            const cropTasks = this.tasks.filter(task => task.cropName === crop);
+            cropTasks.forEach(task => {
+                const activityBar = this.createActivityBar(task);
+                if (activityBar) {
+                    timelineRow.appendChild(activityBar);
+                }
+            });
+
+            timelineGrid.appendChild(timelineRow);
+        });
+    }
+
+    createActivityBar(task) {
+        const startDate = new Date(task.startDate);
+        const endDate = new Date(task.endDate);
+        
+        // Check if task overlaps with current date range
+        const rangeStart = this.dateRange[0];
+        const rangeEnd = this.dateRange[this.dateRange.length - 1];
+        
+        if (endDate < rangeStart || startDate > rangeEnd) {
+            return null; // Task not in current view
+        }
+
+        const activityBar = document.createElement('div');
+        activityBar.className = `activity-bar activity-${task.activityType.toLowerCase().replace(' ', '-')}`;
+        activityBar.dataset.taskId = task.id;
+        activityBar.draggable = true;
+
+        // Calculate position and width
+        const startIndex = Math.max(0, Math.floor((startDate - rangeStart) / (24 * 60 * 60 * 1000)));
+        const endIndex = Math.min(this.dateRange.length - 1, Math.floor((endDate - rangeStart) / (24 * 60 * 60 * 1000)));
+        
+        const width = (endIndex - startIndex + 1) * 60; // 60px per day
+        const left = startIndex * 60;
+
+        activityBar.style.left = `${left}px`;
+        activityBar.style.width = `${width}px`;
+        
+        // Activity label
+        const activityType = task.activityType;
+        const duration = task.duration;
+        activityBar.innerHTML = `
+            <div>${activityType}</div>
+            <div>(${duration}d)</div>
+        `;
+
+        // Add drag and drop functionality
+        this.addDragAndDrop(activityBar, task);
+
+        return activityBar;
+    }
+
+    addDragAndDrop(element, task) {
+        let isDragging = false;
+        let startX = 0;
+        let startLeft = 0;
+
+        element.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startLeft = parseInt(element.style.left);
+            element.classList.add('dragging');
+            
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+            e.preventDefault();
+        });
+
+        const onMouseMove = (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - startX;
+            const newLeft = startLeft + deltaX;
+            const snappedLeft = Math.round(newLeft / 60) * 60; // Snap to day columns
+            
+            element.style.left = `${Math.max(0, snappedLeft)}px`;
+        };
+
+        const onMouseUp = (e) => {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            element.classList.remove('dragging');
+            
+            // Calculate new date
+            const newLeft = parseInt(element.style.left);
+            const dayOffset = Math.round(newLeft / 60);
+            const newStartDate = new Date(this.dateRange[0]);
+            newStartDate.setDate(newStartDate.getDate() + dayOffset);
+            
+            // Update task
+            task.startDate = this.formatDate(newStartDate);
+            task.endDate = this.calculateEndDate(task.startDate, task.duration);
+            
+            this.saveTasks();
+            this.renderUpcomingActivities();
+            
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
     }
 
     showTaskForm(task = null) {
@@ -81,7 +317,7 @@ class FarmPlanner {
     saveTask() {
         const formData = new FormData(document.getElementById('task-form'));
         const task = {
-            id: Date.now(), // Simple ID generation
+            id: Date.now(),
             cropName: formData.get('cropName'),
             fieldName: formData.get('fieldName'),
             season: formData.get('season'),
@@ -96,17 +332,79 @@ class FarmPlanner {
         this.renderGanttChart();
         this.renderUpcomingActivities();
         this.hideTaskForm();
-
-        // Update parent app stats if available
-        if (parent && parent.farmAppUtils) {
-            parent.farmAppUtils.updateStats();
-        }
     }
 
     calculateEndDate(startDate, duration) {
         const start = new Date(startDate);
         const end = new Date(start.getTime() + (duration * 24 * 60 * 60 * 1000));
-        return end.toISOString().split('T')[0];
+        return this.formatDate(end);
+    }
+
+    formatDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    renderUpcomingActivities() {
+        const container = document.getElementById('activities-summary');
+        const emptyState = document.getElementById('empty-state');
+        
+        // Get activities for next 2 weeks
+        const now = new Date();
+        const twoWeeksLater = new Date(now.getTime() + (14 * 24 * 60 * 60 * 1000));
+        
+        const upcomingTasks = this.tasks.filter(task => {
+            const taskStart = new Date(task.startDate);
+            return taskStart >= now && taskStart <= twoWeeksLater;
+        });
+
+        if (upcomingTasks.length === 0) {
+            emptyState.style.display = 'block';
+            container.innerHTML = '<div class="empty-state"><p>No activities scheduled for the next 2 weeks.</p></div>';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        
+        container.innerHTML = upcomingTasks.map(task => {
+            const startDate = new Date(task.startDate);
+            const formattedDate = startDate.toLocaleDateString();
+            
+            return `
+                <div class="activity-summary-item">
+                    <div class="activity-date">${formattedDate}</div>
+                    <div class="activity-info">
+                        <strong>${task.cropName} - ${task.fieldName}</strong><br>
+                        <span class="activity-type activity-${task.activityType.toLowerCase().replace(' ', '-')}">${task.activityType}</span>
+                        <span class="activity-duration">${task.duration} days</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    exportToCSV() {
+        const headers = ['Crop', 'Field', 'Season', 'Activity', 'Start Date', 'Duration', 'End Date'];
+        const rows = this.tasks.map(task => [
+            task.cropName,
+            task.fieldName,
+            task.season,
+            task.activityType,
+            task.startDate,
+            task.duration,
+            task.endDate
+        ]);
+
+        const csvContent = [headers, ...rows]
+            .map(row => row.map(field => `"${field}"`).join(','))
+            .join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'farm-activities.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
     }
 
     loadTasks() {
@@ -127,247 +425,24 @@ class FarmPlanner {
         }
     }
 
-    renderGanttChart() {
-        const container = document.getElementById('gantt-chart');
-        
-        if (this.tasks.length === 0) {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #666;">
-                    <h3>No tasks scheduled</h3>
-                    <p>Click "Add Task" to create your first farming activity</p>
-                </div>
-            `;
-            return;
-        }
-
-        // Simple Gantt chart representation
-        let html = '<div class="gantt-timeline">';
-        
-        // Group tasks by field
-        const tasksByField = this.groupTasksByField();
-        
-        Object.entries(tasksByField).forEach(([field, fieldTasks]) => {
-            html += `<div class="gantt-row">`;
-            html += `<div class="gantt-row-label">${field}</div>`;
-            html += `<div class="gantt-row-tasks">`;
-            
-            fieldTasks.forEach(task => {
-                const activityClass = task.activityType.toLowerCase().replace(' ', '-');
-                const duration = Math.max(task.duration, 1);
-                const width = Math.min(duration * 20, 200); // Scale width
-                
-                html += `
-                    <div class="gantt-task ${activityClass}" 
-                         style="width: ${width}px;" 
-                         title="${task.cropName} - ${task.activityType} (${task.duration} days)"
-                         data-task-id="${task.id}">
-                        <span class="task-label">${task.cropName}</span>
-                        <span class="task-dates">${this.formatDate(task.startDate)} - ${this.formatDate(task.endDate)}</span>
-                    </div>
-                `;
-            });
-            
-            html += `</div></div>`;
-        });
-        
-        html += '</div>';
-        container.innerHTML = html;
-
-        // Add CSS for Gantt chart
-        this.addGanttStyles();
-    }
-
-    addGanttStyles() {
-        const existingStyle = document.getElementById('gantt-dynamic-styles');
-        if (existingStyle) return;
-
-        const style = document.createElement('style');
-        style.id = 'gantt-dynamic-styles';
-        style.textContent = `
-            .gantt-timeline {
-                min-height: 300px;
-            }
-            .gantt-row {
-                display: flex;
-                margin-bottom: 1rem;
-                align-items: center;
-            }
-            .gantt-row-label {
-                width: 150px;
-                font-weight: bold;
-                padding-right: 1rem;
-                color: var(--primary-color);
-            }
-            .gantt-row-tasks {
-                flex: 1;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-            .gantt-task {
-                background: var(--primary-color);
-                color: white;
-                padding: 0.5rem;
-                border-radius: 4px;
-                font-size: 0.8rem;
-                cursor: pointer;
-                transition: transform 0.2s ease;
-                min-width: 80px;
-            }
-            .gantt-task:hover {
-                transform: scale(1.05);
-            }
-            .gantt-task.nursery { background: var(--nursery-color); }
-            .gantt-task.transplanting { background: var(--transplanting-color); }
-            .gantt-task.weeding { background: var(--weeding-color); }
-            .gantt-task.harvest { background: var(--harvest-color); }
-            .gantt-task.pesticides { background: var(--pesticides-color); }
-            .gantt-task.fertilizer { background: var(--fertilizer-color); }
-            .gantt-task.land-preparation { background: var(--land-preparation-color); }
-            .task-label {
-                display: block;
-                font-weight: bold;
-            }
-            .task-dates {
-                display: block;
-                font-size: 0.7rem;
-                opacity: 0.9;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    groupTasksByField() {
-        const grouped = {};
-        this.tasks.forEach(task => {
-            const field = task.fieldName || 'Unassigned';
-            if (!grouped[field]) {
-                grouped[field] = [];
-            }
-            grouped[field].push(task);
-        });
-        return grouped;
-    }
-
-    renderUpcomingActivities() {
-        const container = document.getElementById('activities-summary');
-        const emptyState = document.getElementById('empty-state');
-        
-        const upcomingTasks = this.getUpcomingTasks();
-        
-        if (upcomingTasks.length === 0) {
-            emptyState.style.display = 'block';
-            container.innerHTML = '';
-            container.appendChild(emptyState);
-            return;
-        }
-
-        emptyState.style.display = 'none';
-        
-        let html = '';
-        upcomingTasks.forEach(task => {
-            const daysUntil = this.getDaysUntilTask(task.startDate);
-            const urgencyClass = daysUntil <= 3 ? 'urgent' : daysUntil <= 7 ? 'soon' : 'normal';
-            
-            html += `
-                <div class="activity-card ${urgencyClass}">
-                    <div class="activity-header">
-                        <span class="activity-title">${task.cropName} - ${task.activityType}</span>
-                        <span class="activity-date">${this.formatDate(task.startDate)}</span>
-                    </div>
-                    <div class="activity-details">
-                        <strong>Field:</strong> ${task.fieldName} | 
-                        <strong>Duration:</strong> ${task.duration} days | 
-                        <strong>Season:</strong> ${task.season}
-                        ${daysUntil === 0 ? '<span class="today-badge">TODAY</span>' : 
-                          daysUntil === 1 ? '<span class="tomorrow-badge">TOMORROW</span>' : 
-                          `<span class="days-badge">${daysUntil} days</span>`}
-                    </div>
-                </div>
-            `;
-        });
-        
-        container.innerHTML = html;
-    }
-
-    getUpcomingTasks() {
-        const now = new Date();
-        const twoWeeksFromNow = new Date(now.getTime() + (14 * 24 * 60 * 60 * 1000));
-        
-        return this.tasks
-            .filter(task => {
-                const taskDate = new Date(task.startDate);
-                return taskDate >= now && taskDate <= twoWeeksFromNow;
-            })
-            .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-    }
-
-    getDaysUntilTask(dateString) {
-        const taskDate = new Date(dateString);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        taskDate.setHours(0, 0, 0, 0);
-        
-        const diffTime = taskDate - today;
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    }
-
-    formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        });
-    }
-
-    exportToCSV() {
-        if (this.tasks.length === 0) {
-            alert('No tasks to export');
-            return;
-        }
-
-        const headers = ['Crop Name', 'Field', 'Season', 'Activity Type', 'Start Date', 'Duration (days)', 'End Date'];
-        const csvContent = [
-            headers.join(','),
-            ...this.tasks.map(task => [
-                task.cropName,
-                task.fieldName,
-                task.season,
-                task.activityType,
-                task.startDate,
-                task.duration,
-                task.endDate
-            ].join(','))
-        ].join('\n');
-
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `farm-planner-${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-    }
-
     setupDarkModeToggle() {
-        const toggle = document.getElementById('dark-mode-toggle');
-        const isDarkMode = localStorage.getItem('darkMode') === 'true';
-        
-        if (isDarkMode) {
-            document.body.classList.add('dark-mode');
-            toggle.textContent = '☀️';
-        }
-
-        toggle.addEventListener('click', () => {
+        const toggleBtn = document.getElementById('dark-mode-toggle');
+        toggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            const isNowDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('darkMode', isNowDark);
-            toggle.textContent = isNowDark ? '☀️' : '🌙';
+            const isDark = document.body.classList.contains('dark-mode');
+            toggleBtn.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDark);
         });
+
+        // Load saved preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            toggleBtn.textContent = '☀️';
+        }
     }
 }
 
-// Initialize when DOM is loaded
+// Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new FarmPlanner();
+    new FarmActivityPlanner();
 });

@@ -1,20 +1,21 @@
-/* Farm Planner Styles - Based on your original design */
+/* Farm Activity Planner - Gantt Chart Styles */
 :root {
-    --primary-color: #2c5530;
-    --secondary-color: #4a7c59;
+    --primary-color: #4a7c59;
+    --secondary-color: #2c5530;
     --accent-color: #6b9b7c;
     --background-color: #f5f7f5;
     --text-color: #333;
-    --border-color: #ddd;
+    --border-color: #e0e0e0;
+    --grid-color: #f0f0f0;
     --shadow: 0 2px 10px rgba(0,0,0,0.1);
     
-    /* Activity Colors */
-    --nursery-color: #8fbc8f;
-    --transplanting-color: #32cd32;
-    --weeding-color: #ffd700;
-    --harvest-color: #ff8c00;
-    --pesticides-color: #dc143c;
-    --fertilizer-color: #4169e1;
+    /* Activity Colors - matching your design */
+    --nursery-color: #ff4444;
+    --transplanting-color: #4d9eff;
+    --weeding-color: #ffb84d;
+    --harvest-color: #4dff4d;
+    --pesticides-color: #b84dff;
+    --fertilizer-color: #ff8c4d;
     --land-preparation-color: #8b4513;
 }
 
@@ -104,15 +105,16 @@ body {
 /* Legend */
 .legend-container {
     background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
     box-shadow: var(--shadow);
 }
 
 .legend-container h3 {
     color: var(--primary-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
 }
 
 .legend {
@@ -123,6 +125,398 @@ body {
 
 .legend-item {
     display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.legend-color.nursery { background-color: var(--nursery-color); }
+.legend-color.transplanting { background-color: var(--transplanting-color); }
+.legend-color.weeding { background-color: var(--weeding-color); }
+.legend-color.harvest { background-color: var(--harvest-color); }
+.legend-color.pesticides { background-color: var(--pesticides-color); }
+.legend-color.fertilizer { background-color: var(--fertilizer-color); }
+.legend-color.land-preparation { background-color: var(--land-preparation-color); }
+
+/* Gantt Chart Container */
+.gantt-container {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.gantt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.gantt-header h2 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.date-navigation {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Timeline Layout */
+.gantt-wrapper {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.timeline-header {
+    display: flex;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+}
+
+.crop-header {
+    width: 150px;
+    padding: 0.75rem;
+    border-right: 1px solid rgba(255,255,255,0.3);
+    background-color: var(--primary-color);
+    position: sticky;
+    left: 0;
+    z-index: 10;
+}
+
+.dates-header {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+}
+
+.date-column {
+    min-width: 60px;
+    padding: 0.75rem 0.25rem;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.3);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* Gantt Body */
+.gantt-body {
+    display: flex;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.crops-column {
+    width: 150px;
+    background-color: #f8f9fa;
+    border-right: 1px solid var(--border-color);
+    position: sticky;
+    left: 0;
+    z-index: 5;
+}
+
+.crop-row {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    background-color: #f8f9fa;
+}
+
+.timeline-grid {
+    flex: 1;
+    overflow-x: auto;
+}
+
+.timeline-row {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    min-height: 60px;
+    position: relative;
+    background: linear-gradient(90deg, 
+        transparent 59px, 
+        var(--grid-color) 59px, 
+        var(--grid-color) 60px, 
+        transparent 60px
+    );
+    background-size: 60px 100%;
+}
+
+.timeline-cell {
+    min-width: 60px;
+    border-right: 1px solid var(--grid-color);
+    position: relative;
+}
+
+/* Activity Bars */
+.activity-bar {
+    position: absolute;
+    top: 8px;
+    height: 44px;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: move;
+    user-select: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+    padding: 2px;
+    line-height: 1.2;
+}
+
+.activity-bar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.activity-bar.dragging {
+    opacity: 0.8;
+    z-index: 1000;
+    transform: rotate(2deg);
+}
+
+/* Activity Colors */
+.activity-nursery { background-color: var(--nursery-color); }
+.activity-transplanting { background-color: var(--transplanting-color); }
+.activity-weeding { background-color: var(--weeding-color); }
+.activity-harvest { background-color: var(--harvest-color); }
+.activity-pesticides { background-color: var(--pesticides-color); }
+.activity-fertilizer { background-color: var(--fertilizer-color); }
+.activity-land-preparation { background-color: var(--land-preparation-color); }
+
+/* Summary Section */
+.summary-container {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.summary-container h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.activities-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-summary-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+
+.activity-date {
+    font-weight: bold;
+    color: var(--primary-color);
+    min-width: 80px;
+}
+
+.activity-info {
+    flex: 1;
+}
+
+.activity-type {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.activity-duration {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 124, 89, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .header-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .legend {
+        justify-content: center;
+    }
+    
+    .gantt-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .crop-header {
+        width: 120px;
+    }
+    
+    .crops-column {
+        width: 120px;
+    }
+    
+    .date-column {
+        min-width: 50px;
+        font-size: 0.7rem;
+    }
+    
+    .timeline-cell {
+        min-width: 50px;
+    }
+    
+    .activity-bar {
+        font-size: 0.65rem;
+        padding: 1px;
+    }
+    
+    .activity-summary-item {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* Dark Mode */
+.dark-mode {
+    --background-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --border-color: #333;
+    --grid-color: #2a2a2a;
+}
+
+.dark-mode .app-container {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.dark-mode .legend-container,
+.dark-mode .gantt-container,
+.dark-mode .summary-container,
+.dark-mode .modal-content {
+    background: #2a2a2a;
+    border-color: var(--border-color);
+}
+
+.dark-mode .crop-row {
+    background-color: #333;
+}
+
+.dark-mode .timeline-header {
+    background-color: #1a4a1a;
+}
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;

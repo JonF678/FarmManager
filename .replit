@@ -23,9 +23,6 @@ args = "Farm Management PWA"
 name = "Farm Management PWA"
 author = "agent"
 
-[workflows.workflow.metadata]
-outputType = "webview"
-
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python server.py"
