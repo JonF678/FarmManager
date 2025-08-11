@@ -280,6 +280,12 @@ let currentEditingRecord = null;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
+    // Clear localStorage to show sample data (remove this line in production)
+    if (!localStorage.getItem('farmManagementData') || 
+        JSON.parse(localStorage.getItem('farmManagementData') || '{}').productionRecords?.length === 0) {
+        localStorage.removeItem('farmManagementData');
+    }
+    
     loadData();
     initializeNavigation();
     initializeForms();
@@ -1427,7 +1433,15 @@ function saveData() {
 function loadData() {
     const savedData = localStorage.getItem('farmManagementData');
     if (savedData) {
-        farmData = JSON.parse(savedData);
+        const parsedData = JSON.parse(savedData);
+        // Only use saved data if it has actual records, otherwise keep sample data
+        if (parsedData.productionRecords?.length > 0 || 
+            parsedData.incomeRecords?.length > 0 || 
+            parsedData.expenseRecords?.length > 0 || 
+            parsedData.salaryRecords?.length > 0 || 
+            parsedData.soilTestRecords?.length > 0) {
+            farmData = parsedData;
+        }
     }
 }
 

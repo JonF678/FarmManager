@@ -109,10 +109,14 @@ class RevenuePlanner {
         }
         
         if (savedEntries) {
-            this.cropEntries = JSON.parse(savedEntries);
-        } else {
-            // Add sample crop entries if none exist
-            this.cropEntries = [
+            const parsedEntries = JSON.parse(savedEntries);
+            // Only use saved entries if they exist and have data
+            if (parsedEntries.length > 0) {
+                this.cropEntries = parsedEntries;
+            } else {
+                // Clear empty localStorage and use sample data
+                localStorage.removeItem('sefake-farm-entries');
+                this.cropEntries = [
                 {
                     id: 1,
                     cropName: 'Maize (Corn)',
