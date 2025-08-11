@@ -418,15 +418,30 @@ class RevenuePlanner {
                 <td>₵${crop.expensePerAcre.toFixed(2)}</td>
                 <td>${crop.rotationGroup}</td>
                 <td>
-                    <button class="btn btn-secondary" onclick="revenuePlanner.showCropDataForm(revenuePlanner.cropData[${index}])">
+                    <button class="btn btn-secondary edit-crop-btn" data-index="${index}">
                         Edit
                     </button>
-                    <button class="btn btn-danger" onclick="revenuePlanner.deleteCropData(${index})">
+                    <button class="btn btn-danger delete-crop-btn" data-index="${index}">
                         Delete
                     </button>
                 </td>
             </tr>
         `).join('');
+        
+        // Add event listeners for the buttons
+        tbody.querySelectorAll('.edit-crop-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.showCropDataForm(this.cropData[index]);
+            });
+        });
+        
+        tbody.querySelectorAll('.delete-crop-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.deleteCropData(index);
+            });
+        });
     }
     
     updateFinancialDisplay() {
