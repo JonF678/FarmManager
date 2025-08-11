@@ -343,22 +343,65 @@ class RevenuePlanner {
     }
     
     saveCropData() {
-        const form = document.getElementById('crop-data-form');
-        const editIndex = form.dataset.editIndex;
+        const form = document.getElementById('crop-data-entry-form');
+        const editIndex = form ? form.dataset.editIndex : undefined;
+        
+        // Get form values with validation
+        const name = document.getElementById('crop-name').value.trim();
+        const pricePerUnit = parseFloat(document.getElementById('price-per-unit').value) || 0;
+        const yieldPerAcre = parseFloat(document.getElementById('yield-per-acre').value) || 0;
+        const yieldUnit = document.getElementById('yield-unit').value;
+        const daysToTransplant = parseInt(document.getElementById('days-to-transplant').value) || 0;
+        const daysToMaturity = parseInt(document.getElementById('days-to-maturity').value) || 0;
+        const expensePerAcre = parseFloat(document.getElementById('expense-per-acre').value) || 0;
+        const rotationGroup = document.getElementById('rotation-group').value;
+        
+        // Validate required fields
+        if (!name) {
+            alert('Please enter a crop name');
+            return;
+        }
+        
+        if (pricePerUnit <= 0) {
+            alert('Please enter a valid price per unit');
+            return;
+        }
+        
+        if (yieldPerAcre <= 0) {
+            alert('Please enter a valid yield per acre');
+            return;
+        }
+        
+        if (!yieldUnit) {
+            alert('Please select a yield unit');
+            return;
+        }
+        
+        if (daysToMaturity <= 0) {
+            alert('Please enter valid days to maturity');
+            return;
+        }
+        
+        if (!rotationGroup) {
+            alert('Please select a rotation group');
+            return;
+        }
         
         const cropData = {
-            name: document.getElementById('crop-name').value,
-            pricePerUnit: parseFloat(document.getElementById('price-per-unit').value),
-            yieldPerAcre: parseFloat(document.getElementById('yield-per-acre').value),
-            yieldUnit: document.getElementById('yield-unit').value,
-            daysToTransplant: parseInt(document.getElementById('days-to-transplant').value),
-            daysToMaturity: parseInt(document.getElementById('days-to-maturity').value),
-            expensePerAcre: parseFloat(document.getElementById('expense-per-acre').value),
-            rotationGroup: document.getElementById('rotation-group').value
+            name: name,
+            pricePerUnit: pricePerUnit,
+            yieldPerAcre: yieldPerAcre,
+            yieldUnit: yieldUnit,
+            daysToTransplant: daysToTransplant,
+            daysToMaturity: daysToMaturity,
+            expensePerAcre: expensePerAcre,
+            rotationGroup: rotationGroup
         };
         
-        if (editIndex !== undefined) {
-            this.cropData[editIndex] = cropData;
+        console.log('Saving crop data:', cropData);
+        
+        if (editIndex !== undefined && editIndex !== null && editIndex !== '') {
+            this.cropData[parseInt(editIndex)] = cropData;
         } else {
             this.cropData.push(cropData);
         }
@@ -449,26 +492,38 @@ class RevenuePlanner {
     updateCropDataTable() {
         const tbody = document.getElementById('crop-data-tbody');
         
-        tbody.innerHTML = this.cropData.map((crop, index) => `
-            <tr>
-                <td>${crop.name}</td>
-                <td>₵${crop.pricePerUnit.toFixed(2)}</td>
-                <td>${crop.yieldPerAcre}</td>
-                <td>${crop.yieldUnit}</td>
-                <td>${crop.daysToTransplant}</td>
-                <td>${crop.daysToMaturity}</td>
-                <td>₵${crop.expensePerAcre.toFixed(2)}</td>
-                <td>${crop.rotationGroup}</td>
-                <td>
-                    <button class="btn btn-secondary edit-crop-btn" data-index="${index}">
-                        Edit
-                    </button>
-                    <button class="btn btn-danger delete-crop-btn" data-index="${index}">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = this.cropData.map((crop, index) => {
+            // Handle potential NaN values with defaults
+            const name = crop.name || 'Unknown';
+            const pricePerUnit = isNaN(crop.pricePerUnit) ? 0 : crop.pricePerUnit;
+            const yieldPerAcre = isNaN(crop.yieldPerAcre) ? 0 : crop.yieldPerAcre;
+            const yieldUnit = crop.yieldUnit || 'units';
+            const daysToTransplant = isNaN(crop.daysToTransplant) ? 0 : crop.daysToTransplant;
+            const daysToMaturity = isNaN(crop.daysToMaturity) ? 0 : crop.daysToMaturity;
+            const expensePerAcre = isNaN(crop.expensePerAcre) ? 0 : crop.expensePerAcre;
+            const rotationGroup = crop.rotationGroup || 'Unknown';
+            
+            return `
+                <tr>
+                    <td>${name}</td>
+                    <td>₵${pricePerUnit.toFixed(2)}</td>
+                    <td>${yieldPerAcre}</td>
+                    <td>${yieldUnit}</td>
+                    <td>${daysToTransplant}</td>
+                    <td>${daysToMaturity}</td>
+                    <td>₵${expensePerAcre.toFixed(2)}</td>
+                    <td>${rotationGroup}</td>
+                    <td>
+                        <button class="btn btn-secondary edit-crop-btn" data-index="${index}">
+                            Edit
+                        </button>
+                        <button class="btn btn-danger delete-crop-btn" data-index="${index}">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
         
         // Add event listeners for the buttons
         tbody.querySelectorAll('.edit-crop-btn').forEach(btn => {
