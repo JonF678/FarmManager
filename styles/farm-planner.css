@@ -335,6 +335,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 6px;
     background: #f8f9fa;
+    align-items: center;
 }
 
 .activity-date {
@@ -362,10 +363,73 @@ body {
     font-size: 0.9rem;
 }
 
+.activity-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.btn-small {
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    background: var(--accent-color);
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-small:hover {
+    background: var(--primary-color);
+    transform: translateY(-1px);
+}
+
 .empty-state {
     text-align: center;
     padding: 2rem;
     color: #666;
+}
+
+/* Activity Menu */
+.activity-menu {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 120px;
+}
+
+.menu-item {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: left;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.menu-item:hover {
+    background-color: var(--background-color);
+}
+
+.menu-item.delete-btn:hover {
+    background-color: #fee;
+    color: #d32f2f;
+}
+
+.menu-item.edit-btn:hover {
+    background-color: #e3f2fd;
+    color: #1976d2;
 }
 
 /* Modal Styles */

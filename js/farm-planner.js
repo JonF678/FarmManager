@@ -228,6 +228,9 @@ class FarmActivityPlanner {
 
         // Add drag and drop functionality
         this.addDragAndDrop(activityBar, task);
+        
+        // Add click functionality for edit/delete
+        this.addClickHandler(activityBar, task);
 
         return activityBar;
     }
@@ -282,6 +285,78 @@ class FarmActivityPlanner {
         };
     }
 
+    addClickHandler(element, task) {
+        element.addEventListener('click', (e) => {
+            // Don't trigger during drag operations
+            if (element.classList.contains('dragging')) return;
+            
+            e.stopPropagation();
+            this.showActivityMenu(e, task);
+        });
+    }
+
+    showActivityMenu(event, task) {
+        // Remove any existing menu
+        this.removeActivityMenu();
+        
+        const menu = document.createElement('div');
+        menu.className = 'activity-menu';
+        menu.innerHTML = `
+            <button class="menu-item edit-btn">✏️ Edit</button>
+            <button class="menu-item delete-btn">🗑️ Delete</button>
+            <button class="menu-item close-btn">✖️ Close</button>
+        `;
+        
+        // Position menu near the click
+        menu.style.position = 'absolute';
+        menu.style.left = `${event.pageX}px`;
+        menu.style.top = `${event.pageY}px`;
+        menu.style.zIndex = '1001';
+        
+        document.body.appendChild(menu);
+        
+        // Add event listeners
+        menu.querySelector('.edit-btn').addEventListener('click', () => {
+            this.editTask(task);
+            this.removeActivityMenu();
+        });
+        
+        menu.querySelector('.delete-btn').addEventListener('click', () => {
+            this.deleteTask(task);
+            this.removeActivityMenu();
+        });
+        
+        menu.querySelector('.close-btn').addEventListener('click', () => {
+            this.removeActivityMenu();
+        });
+        
+        // Close menu when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', this.removeActivityMenu.bind(this), { once: true });
+        }, 100);
+    }
+
+    removeActivityMenu() {
+        const existingMenu = document.querySelector('.activity-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+    }
+
+    editTask(task) {
+        this.currentEditingTask = task;
+        this.showTaskForm(task);
+    }
+
+    deleteTask(task) {
+        if (confirm(`Delete ${task.activityType} activity for ${task.cropName}?`)) {
+            this.tasks = this.tasks.filter(t => t.id !== task.id);
+            this.saveTasks();
+            this.renderGanttChart();
+            this.renderUpcomingActivities();
+        }
+    }
+
     showTaskForm(task = null) {
         const modal = document.getElementById('task-form-modal');
         const form = document.getElementById('task-form');
@@ -303,6 +378,7 @@ class FarmActivityPlanner {
         const modal = document.getElementById('task-form-modal');
         modal.classList.remove('active');
         modal.style.display = 'none';
+        this.currentEditingTask = null; // Reset editing state
     }
 
     populateForm(task) {
@@ -316,8 +392,7 @@ class FarmActivityPlanner {
 
     saveTask() {
         const formData = new FormData(document.getElementById('task-form'));
-        const task = {
-            id: Date.now(),
+        const taskData = {
             cropName: formData.get('cropName'),
             fieldName: formData.get('fieldName'),
             season: formData.get('season'),
@@ -327,7 +402,19 @@ class FarmActivityPlanner {
             endDate: this.calculateEndDate(formData.get('startDate'), parseInt(formData.get('duration')))
         };
 
-        this.tasks.push(task);
+        if (this.currentEditingTask) {
+            // Update existing task
+            Object.assign(this.currentEditingTask, taskData);
+            this.currentEditingTask = null;
+        } else {
+            // Create new task
+            const task = {
+                id: Date.now(),
+                ...taskData
+            };
+            this.tasks.push(task);
+        }
+
         this.saveTasks();
         this.renderGanttChart();
         this.renderUpcomingActivities();
@@ -370,16 +457,37 @@ class FarmActivityPlanner {
             const formattedDate = startDate.toLocaleDateString();
             
             return `
-                <div class="activity-summary-item">
+                <div class="activity-summary-item" data-task-id="${task.id}">
                     <div class="activity-date">${formattedDate}</div>
                     <div class="activity-info">
                         <strong>${task.cropName} - ${task.fieldName}</strong><br>
                         <span class="activity-type activity-${task.activityType.toLowerCase().replace(' ', '-')}">${task.activityType}</span>
                         <span class="activity-duration">${task.duration} days</span>
                     </div>
+                    <div class="activity-actions">
+                        <button class="btn-small edit-activity" data-task-id="${task.id}">✏️</button>
+                        <button class="btn-small delete-activity" data-task-id="${task.id}">🗑️</button>
+                    </div>
                 </div>
             `;
         }).join('');
+        
+        // Add event listeners for summary actions
+        container.querySelectorAll('.edit-activity').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const taskId = parseInt(e.target.dataset.taskId);
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task) this.editTask(task);
+            });
+        });
+        
+        container.querySelectorAll('.delete-activity').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const taskId = parseInt(e.target.dataset.taskId);
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task) this.deleteTask(task);
+            });
+        });
     }
 
     exportToCSV() {
