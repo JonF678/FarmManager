@@ -307,9 +307,18 @@ class RevenuePlanner {
         const plantingDate = document.getElementById('planting-date').value;
         const acresUsed = parseFloat(document.getElementById('acres-used').value);
         
+        console.log('Adding crop entry:', { cropName, plantingDate, acresUsed });
+        console.log('Available crops:', this.cropData.map(c => c.name));
+        
+        if (!cropName || cropName.trim() === '') {
+            alert('Please select a crop from the dropdown');
+            return;
+        }
+        
         const cropInfo = this.cropData.find(crop => crop.name === cropName);
         if (!cropInfo) {
-            alert('Please select a valid crop');
+            console.error('Crop not found:', cropName);
+            alert('Please select a valid crop from the dropdown');
             return;
         }
         
@@ -347,14 +356,36 @@ class RevenuePlanner {
         const editIndex = form ? form.dataset.editIndex : undefined;
         
         // Get form values with validation
-        const name = document.getElementById('crop-name').value.trim();
-        const pricePerUnit = parseFloat(document.getElementById('price-per-unit').value) || 0;
-        const yieldPerAcre = parseFloat(document.getElementById('yield-per-acre').value) || 0;
-        const yieldUnit = document.getElementById('yield-unit').value;
-        const daysToTransplant = parseInt(document.getElementById('days-to-transplant').value) || 0;
-        const daysToMaturity = parseInt(document.getElementById('days-to-maturity').value) || 0;
-        const expensePerAcre = parseFloat(document.getElementById('expense-per-acre').value) || 0;
-        const rotationGroup = document.getElementById('rotation-group').value;
+        const nameInput = document.getElementById('crop-name');
+        const priceInput = document.getElementById('price-per-unit');
+        const yieldInput = document.getElementById('yield-per-acre');
+        const unitInput = document.getElementById('yield-unit');
+        const transplantInput = document.getElementById('days-to-transplant');
+        const maturityInput = document.getElementById('days-to-maturity');
+        const expenseInput = document.getElementById('expense-per-acre');
+        const rotationInput = document.getElementById('rotation-group');
+        
+        console.log('Form inputs found:', {
+            name: !!nameInput,
+            price: !!priceInput,
+            yield: !!yieldInput,
+            unit: !!unitInput,
+            transplant: !!transplantInput,
+            maturity: !!maturityInput,
+            expense: !!expenseInput,
+            rotation: !!rotationInput
+        });
+        
+        const name = nameInput ? nameInput.value.trim() : '';
+        const pricePerUnit = priceInput ? parseFloat(priceInput.value) || 0 : 0;
+        const yieldPerAcre = yieldInput ? parseFloat(yieldInput.value) || 0 : 0;
+        const yieldUnit = unitInput ? unitInput.value : '';
+        const daysToTransplant = transplantInput ? parseInt(transplantInput.value) || 0 : 0;
+        const daysToMaturity = maturityInput ? parseInt(maturityInput.value) || 0 : 0;
+        const expensePerAcre = expenseInput ? parseFloat(expenseInput.value) || 0 : 0;
+        const rotationGroup = rotationInput ? rotationInput.value : '';
+        
+        console.log('Form values:', { name, pricePerUnit, yieldPerAcre, yieldUnit, daysToTransplant, daysToMaturity, expensePerAcre, rotationGroup });
         
         // Validate required fields
         if (!name) {
@@ -502,7 +533,7 @@ class RevenuePlanner {
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-danger" onclick="revenuePlanner.deleteCropEntry(${entry.id})">
+                    <button class="btn btn-danger" onclick="window.revenuePlanner.deleteCropEntry(${entry.id})">
                         Delete
                     </button>
                 </td>
@@ -563,7 +594,15 @@ class RevenuePlanner {
     }
     
     updateFinancialDisplay() {
-        const selectedYear = document.getElementById('financial-year-select').value;
+        const yearSelector = document.getElementById('financial-year-select');
+        const tbody = document.getElementById('financial-tbody');
+        
+        if (!yearSelector || !tbody) {
+            console.log('Financial display elements not found, creating default display');
+            return;
+        }
+        
+        const selectedYear = yearSelector.value;
         const yearEntries = this.cropEntries.filter(entry => 
             new Date(entry.plantingDate).getFullYear().toString() === selectedYear
         );
@@ -572,10 +611,8 @@ class RevenuePlanner {
         let totalExpenses = 0;
         let totalRevenue = 0;
         
-        const tbody = document.getElementById('financial-tbody');
-        
         if (yearEntries.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No entries for selected year</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No crop entries found. Add some crops in the Crop Planner tab first.</td></tr>';
         } else {
             tbody.innerHTML = yearEntries.map(entry => {
                 const revenue = entry.actualRevenue || entry.plannedRevenue;
@@ -603,28 +640,43 @@ class RevenuePlanner {
         const avgMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100) : 0;
         const roi = totalExpenses > 0 ? ((totalProfit / totalExpenses) * 100) : 0;
         
-        document.getElementById('total-profit').textContent = `₵${totalProfit.toFixed(2)}`;
-        document.getElementById('total-expenses').textContent = `₵${totalExpenses.toFixed(2)}`;
-        document.getElementById('average-margin').textContent = `${avgMargin.toFixed(1)}%`;
-        document.getElementById('roi').textContent = `${roi.toFixed(1)}%`;
+        // Update financial summary elements if they exist
+        const profitElement = document.getElementById('total-profit');
+        const expensesElement = document.getElementById('total-expenses');
+        const marginElement = document.getElementById('average-margin');
+        const roiElement = document.getElementById('roi');
+        
+        if (profitElement) profitElement.textContent = `₵${totalProfit.toFixed(2)}`;
+        if (expensesElement) expensesElement.textContent = `₵${totalExpenses.toFixed(2)}`;
+        if (marginElement) marginElement.textContent = `${avgMargin.toFixed(1)}%`;
+        if (roiElement) roiElement.textContent = `${roi.toFixed(1)}%`;
     }
     
     updateSuccessDisplay() {
-        const selectedYear = document.getElementById('success-year-select').value;
+        const yearSelector = document.getElementById('success-year-select');
+        const successRateElement = document.getElementById('overall-success-rate');
+        const metersContainer = document.getElementById('success-meters-container');
+        
+        if (!yearSelector || !successRateElement || !metersContainer) {
+            console.log('Success display elements not found');
+            return;
+        }
+        
+        const selectedYear = yearSelector.value;
         const yearEntries = this.cropEntries.filter(entry => 
             new Date(entry.plantingDate).getFullYear().toString() === selectedYear &&
             entry.actualYield !== null && entry.actualRevenue !== null
         );
         
         if (yearEntries.length === 0) {
-            document.getElementById('overall-success-rate').innerHTML = `
+            successRateElement.innerHTML = `
                 <div class="success-circle">
                     <div class="success-percentage">0%</div>
                     <div class="success-label">Overall Success</div>
                 </div>
             `;
-            document.getElementById('success-meters-container').innerHTML = 
-                '<p class="empty-state">No actual data available for success metrics</p>';
+            metersContainer.innerHTML = 
+                '<p class="empty-state">No actual data available for success metrics. Enter actual yield and revenue values first.</p>';
             return;
         }
         
@@ -673,10 +725,32 @@ class RevenuePlanner {
     }
     
     updateSummaryDisplay() {
-        const selectedYear = document.getElementById('summary-year-select').value;
-        const yearEntries = this.cropEntries.filter(entry => 
-            new Date(entry.plantingDate).getFullYear().toString() === selectedYear
-        );
+        const yearSelector = document.getElementById('summary-year-select');
+        
+        // Always show summary data regardless of year selector
+        const yearEntries = this.cropEntries;
+        
+        const totalCropsElement = document.getElementById('total-crops-planted');
+        const totalAcresElement = document.getElementById('total-acres-used');
+        const activePlantingsElement = document.getElementById('active-plantings');
+        
+        if (totalCropsElement) {
+            totalCropsElement.textContent = yearEntries.length.toString();
+        }
+        
+        if (totalAcresElement) {
+            const totalAcres = yearEntries.reduce((sum, entry) => sum + entry.acresUsed, 0);
+            totalAcresElement.textContent = totalAcres.toFixed(1);
+        }
+        
+        if (activePlantingsElement) {
+            const today = new Date();
+            const activePlantings = yearEntries.filter(entry => {
+                const harvestDate = new Date(entry.harvestDate);
+                return harvestDate > today;
+            }).length;
+            activePlantingsElement.textContent = activePlantings.toString();
+        }
         
         if (yearEntries.length === 0) {
             document.getElementById('total-revenue').textContent = '₵0.00';
