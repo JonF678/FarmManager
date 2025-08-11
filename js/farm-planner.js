@@ -9,115 +9,18 @@ class FarmActivityPlanner {
     }
 
     init() {
-        // Clear localStorage if empty to show sample data
-        const stored = localStorage.getItem('farmPlannerTasks');
-        if (!stored || JSON.parse(stored).length === 0) {
-            localStorage.removeItem('farmPlannerTasks');
-        }
+        // Clear all localStorage data
+        localStorage.removeItem('farmPlannerTasks');
         
         this.setupEventListeners();
-        this.loadSampleData(); // Add sample data if empty
+        this.loadSampleData();
         this.renderGanttChart();
         this.renderUpcomingActivities();
     }
 
     loadSampleData() {
-        if (this.tasks.length === 0) {
-            // Add comprehensive sample data
-            this.tasks = [
-                {
-                    id: 1,
-                    cropName: 'Maize',
-                    fieldName: 'North Field',
-                    season: 'A',
-                    activityType: 'Land preparation',
-                    startDate: '2025-01-05',
-                    duration: 7,
-                    endDate: '2025-01-11'
-                },
-                {
-                    id: 2,
-                    cropName: 'Maize',
-                    fieldName: 'North Field',
-                    season: 'A',
-                    activityType: 'Planting',
-                    startDate: '2025-01-15',
-                    duration: 3,
-                    endDate: '2025-01-17'
-                },
-                {
-                    id: 3,
-                    cropName: 'Maize',
-                    fieldName: 'North Field',
-                    season: 'A',
-                    activityType: 'Fertilizer application',
-                    startDate: '2025-02-10',
-                    duration: 2,
-                    endDate: '2025-02-11'
-                },
-                {
-                    id: 4,
-                    cropName: 'Maize',
-                    fieldName: 'North Field',
-                    season: 'A',
-                    activityType: 'Weeding',
-                    startDate: '2025-03-20',
-                    duration: 5,
-                    endDate: '2025-03-24'
-                },
-                {
-                    id: 5,
-                    cropName: 'Maize',
-                    fieldName: 'North Field',
-                    season: 'A',
-                    activityType: 'Harvesting',
-                    startDate: '2025-06-10',
-                    duration: 7,
-                    endDate: '2025-06-16'
-                },
-                {
-                    id: 6,
-                    cropName: 'Tomatoes',
-                    fieldName: 'South Field',
-                    season: 'B',
-                    activityType: 'Land preparation',
-                    startDate: '2025-07-01',
-                    duration: 5,
-                    endDate: '2025-07-05'
-                },
-                {
-                    id: 7,
-                    cropName: 'Tomatoes',
-                    fieldName: 'South Field',
-                    season: 'B',
-                    activityType: 'Planting',
-                    startDate: '2025-07-15',
-                    duration: 3,
-                    endDate: '2025-07-17'
-                },
-                {
-                    id: 8,
-                    cropName: 'Tomatoes',
-                    fieldName: 'South Field',
-                    season: 'B',
-                    activityType: 'Pest control',
-                    startDate: '2025-08-05',
-                    duration: 2,
-                    endDate: '2025-08-06'
-                },
-                {
-                    id: 9,
-                    cropName: 'Tomatoes',
-                    fieldName: 'South Field',
-                    season: 'B',
-                    activityType: 'Harvesting',
-                    startDate: '2025-09-15',
-                    duration: 10,
-                    endDate: '2025-09-24'
-                }
-            ];
-            this.saveTasks();
-        }
+        // No sample data - start with empty tasks
+        return;
     }
 
     setupEventListeners() {

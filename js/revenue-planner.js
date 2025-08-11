@@ -9,11 +9,9 @@ class RevenuePlanner {
     }
     
     init() {
-        // Clear empty localStorage entries to show sample data
-        const savedEntries = localStorage.getItem('sefake-farm-entries');
-        if (!savedEntries || JSON.parse(savedEntries).length === 0) {
-            localStorage.removeItem('sefake-farm-entries');
-        }
+        // Clear all localStorage data
+        localStorage.removeItem('sefake-farm-entries');
+        localStorage.removeItem('sefake-farm-crop-data');
         
         this.loadDefaultCropData();
         this.loadFromStorage();
@@ -116,65 +114,10 @@ class RevenuePlanner {
         
         if (savedEntries && savedEntries !== 'null') {
             const parsedEntries = JSON.parse(savedEntries);
-            // Only use saved entries if they exist and have data
             if (Array.isArray(parsedEntries) && parsedEntries.length > 0) {
                 this.cropEntries = parsedEntries;
-                return; // Exit early if we have valid data
             }
         }
-        
-        // Add sample crop entries if none exist
-        this.cropEntries = [
-                {
-                    id: 1,
-                    cropName: 'Maize (Corn)',
-                    fieldName: 'North Field',
-                    acreage: 2.5,
-                    season: 'A',
-                    plantingDate: '2025-01-15',
-                    harvestDate: '2025-06-15',
-                    year: 2025,
-                    expectedYield: 3750, // 1500 kg/acre * 2.5 acres
-                    actualYield: 3600,
-                    totalCosts: 750, // 300/acre * 2.5 acres
-                    revenue: 4320, // 3600 kg * 1.20/kg
-                    profit: 3570,
-                    success: 96 // actualYield/expectedYield * 100
-                },
-                {
-                    id: 2,
-                    cropName: 'Tomatoes',
-                    fieldName: 'South Field',
-                    acreage: 1.5,
-                    season: 'B',
-                    plantingDate: '2025-07-15',
-                    harvestDate: '2025-10-15',
-                    year: 2025,
-                    expectedYield: 3000, // 2000 kg/acre * 1.5 acres
-                    actualYield: 2850,
-                    totalCosts: 750, // 500/acre * 1.5 acres
-                    revenue: 7125, // 2850 kg * 2.50/kg
-                    profit: 6375,
-                    success: 95 // actualYield/expectedYield * 100
-                },
-                {
-                    id: 3,
-                    cropName: 'Beans',
-                    fieldName: 'East Field',
-                    acreage: 1.0,
-                    season: 'A',
-                    plantingDate: '2025-03-01',
-                    harvestDate: '2025-05-15',
-                    year: 2025,
-                    expectedYield: 600, // 600 kg/acre * 1 acre
-                    actualYield: 580,
-                    totalCosts: 200, // 200/acre * 1 acre
-                    revenue: 2320, // 580 kg * 4.00/kg
-                    profit: 2120,
-                    success: 97 // actualYield/expectedYield * 100
-                }
-            ];
-            this.saveToStorage();
     }
     
     saveToStorage() {
