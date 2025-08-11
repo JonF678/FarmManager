@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="attached_assets/sefake-farms-high-resolution-logo-white_1751389473138.png" alt="Sefake Farms Logo" class="farm-logo">
+                    <div class="header-text">
+                        <h1>Sefake Farms</h1>
+                        <p class="tagline">Harvesting happiness, one crop at a time</p>
+                    </div>
+                </div>
+                <h2>Farm Management System</h2>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+                <button class="nav-btn" data-section="production-records">Production Records</button>
+                <button class="nav-btn" data-section="production-income">Production Income</button>
+                <button class="nav-btn" data-section="production-expenses">Production Expenses</button>
+                <button class="nav-btn" data-section="employee-salaries">Employee Salaries</button>
+                <button class="nav-btn" data-section="soil-monitoring">Soil Monitoring</button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <h2>Dashboard Overview</h2>
+                <div class="section-header">
+                    <div class="filter-controls">
+                        <label for="dashboard-year-filter">Filter by Year:</label>
+                        <select id="dashboard-year-filter">
+                            <option value="">All Years</option>
+                        </select>
+                        <label for="dashboard-season-filter">Filter by Season:</label>
+                        <select id="dashboard-season-filter">
+                            <option value="">All Seasons</option>
+                            <option value="A">Season A (Jan-Jun)</option>
+                            <option value="B">Season B (Jul-Dec)</option>
+                        </select>
+                        <label for="dashboard-field-filter">Filter by Field:</label>
+                        <select id="dashboard-field-filter">
+                            <option value="">All Fields</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="summary-card">
+                        <h3>Total Production Income</h3>
+                        <p class="summary-value" id="total-income">₵0.00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Total Production Expenses</h3>
+                        <p class="summary-value" id="total-expenses">₵0.00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Total Employee Salaries</h3>
+                        <p class="summary-value" id="total-salaries">₵0.00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Net Income</h3>
+                        <p class="summary-value" id="net-income">₵0.00</p>
+                    </div>
+                </div>
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3>Income vs Expenses</h3>
+                        <canvas id="incomeExpenseChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Expense Breakdown</h3>
+                        <canvas id="expenseBreakdownChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Production Overview</h3>
+                        <canvas id="productionChart"></canvas>
+                    </div>
+                </div>
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="recent-activity-list" class="activity-list">
+                        <p class="no-data">No recent activity</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Production Records Section -->
+            <section id="production-records" class="section">
+                <h2>Production Records</h2>
+                <div class="section-header">
+                    <div class="filter-controls">
+                        <label for="year-filter">Filter by Year:</label>
+                        <select id="year-filter">
+                            <option value="">All Years</option>
+                        </select>
+                        <label for="season-filter">Filter by Season:</label>
+                        <select id="season-filter">
+                            <option value="">All Seasons</option>
+                            <option value="A">Season A (Jan-Jun)</option>
+                            <option value="B">Season B (Jul-Dec)</option>
+                        </select>
+                        <label for="field-filter">Filter by Field:</label>
+                        <select id="field-filter">
+                            <option value="">All Fields</option>
+                        </select>
+                        <button type="button" id="export-csv-btn" class="export-btn">Export to CSV</button>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="form-container">
+                        <form id="production-form" class="data-form">
+                            <div class="form-group">
+                                <label for="prod-date">Date:</label>
+                                <input type="date" id="prod-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-activity">Activity:</label>
+                                <select id="prod-activity" required>
+                                    <option value="">Select Activity</option>
+                                    <option value="Planting">Planting</option>
+                                    <option value="Harvesting">Harvesting</option>
+                                    <option value="Fertilizing">Fertilizing</option>
+                                    <option value="Irrigation">Irrigation</option>
+                                    <option value="Pest Control">Pest Control</option>
+                                    <option value="Soil Preparation">Soil Preparation</option>
+                                    <option value="Equipment Maintenance">Equipment Maintenance</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-season">Season:</label>
+                                <select id="prod-season" required>
+                                    <option value="">Select Season</option>
+                                    <option value="A">Season A (Jan-Jun)</option>
+                                    <option value="B">Season B (Jul-Dec)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-field">Field:</label>
+                                <input type="text" id="prod-field" placeholder="e.g., North Field, South Field" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-notes">Notes:</label>
+                                <textarea id="prod-notes" rows="2" placeholder="Brief description of the activity"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-tag1">Tag:</label>
+                                <input type="text" id="prod-tag1" placeholder="e.g., Summer Crop, Winter Crop, Equipment">
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-comments">Comments:</label>
+                                <textarea id="prod-comments" rows="3" placeholder="Detailed observations or additional information"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-contact">Contact Number:</label>
+                                <input type="tel" id="prod-contact" placeholder="+1-xxx-xxx-xxxx">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit">Add Record</button>
+                                <button type="button" id="cancel-prod-edit" class="cancel-btn" style="display:none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table id="production-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Activity</th>
+                                    <th>Season</th>
+                                    <th>Field</th>
+                                    <th>Notes</th>
+                                    <th>Tag</th>
+                                    <th>Comments</th>
+                                    <th>Contact Number</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="production-tbody">
+                                <tr class="no-data-row">
+                                    <td colspan="7">No production records found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Production Income Section -->
+            <section id="production-income" class="section">
+                <h2>Production Income</h2>
+                <div class="section-header">
+                    <div class="filter-controls">
+                        <label for="income-year-filter">Filter by Year:</label>
+                        <select id="income-year-filter">
+                            <option value="">All Years</option>
+                        </select>
+                        <label for="income-season-filter">Filter by Season:</label>
+                        <select id="income-season-filter">
+                            <option value="">All Seasons</option>
+                            <option value="A">Season A (Jan-Jun)</option>
+                            <option value="B">Season B (Jul-Dec)</option>
+                        </select>
+                        <label for="income-field-filter">Filter by Field:</label>
+                        <select id="income-field-filter">
+                            <option value="">All Fields</option>
+                        </select>
+                        <button type="button" id="export-income-csv-btn" class="export-btn">Export to CSV</button>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="form-container">
+                        <form id="income-form" class="data-form">
+                            <div class="form-group">
+                                <label for="income-date">Date:</label>
+                                <input type="date" id="income-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-item">Item/Crop:</label>
+                                <input type="text" id="income-item" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-season">Season:</label>
+                                <select id="income-season" required>
+                                    <option value="">Select Season</option>
+                                    <option value="A">Season A (Jan-Jun)</option>
+                                    <option value="B">Season B (Jul-Dec)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-field">Field:</label>
+                                <input type="text" id="income-field" placeholder="e.g., North Field, South Field" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-quantity">Quantity Sold:</label>
+                                <input type="number" id="income-quantity" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-unit">Unit:</label>
+                                <input type="text" id="income-unit" placeholder="kg, tons, pieces" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-price">Unit Price:</label>
+                                <input type="number" id="income-price" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-total">Total Amount:</label>
+                                <input type="number" id="income-total" step="0.01" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="income-buyer">Buyer:</label>
+                                <input type="text" id="income-buyer">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit">Add Income</button>
+                                <button type="button" id="cancel-income-edit" class="cancel-btn" style="display:none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table id="income-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Item/Crop</th>
+                                    <th>Season</th>
+                                    <th>Field</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Amount</th>
+                                    <th>Buyer</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="income-tbody">
+                                <tr class="no-data-row">
+                                    <td colspan="10">No income records found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="table-summary">
+                            <strong>Total Income: ₵<span id="income-summary">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Production Expenses Section -->
+            <section id="production-expenses" class="section">
+                <h2>Production Expenses</h2>
+                <div class="section-header">
+                    <div class="filter-controls">
+                        <label for="expense-year-filter">Filter by Year:</label>
+                        <select id="expense-year-filter">
+                            <option value="">All Years</option>
+                        </select>
+                        <label for="expense-season-filter">Filter by Season:</label>
+                        <select id="expense-season-filter">
+                            <option value="">All Seasons</option>
+                            <option value="A">Season A (Jan-Jun)</option>
+                            <option value="B">Season B (Jul-Dec)</option>
+                        </select>
+                        <label for="expense-field-filter">Filter by Field:</label>
+                        <select id="expense-field-filter">
+                            <option value="">All Fields</option>
+                        </select>
+                        <button type="button" id="export-expense-csv-btn" class="export-btn">Export to CSV</button>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="form-container">
+                        <form id="expense-form" class="data-form">
+                            <div class="form-group">
+                                <label for="expense-date">Date:</label>
+                                <input type="date" id="expense-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-category">Category:</label>
+                                <select id="expense-category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Seeds">Seeds</option>
+                                    <option value="Fertilizers">Fertilizers</option>
+                                    <option value="Pesticides">Pesticides</option>
+                                    <option value="Equipment">Equipment</option>
+                                    <option value="Fuel">Fuel</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                    <option value="Labor">Labor</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-season">Season:</label>
+                                <select id="expense-season" required>
+                                    <option value="">Select Season</option>
+                                    <option value="A">Season A (Jan-Jun)</option>
+                                    <option value="B">Season B (Jul-Dec)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-field">Field:</label>
+                                <input type="text" id="expense-field" placeholder="e.g., North Field, South Field" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-description">Description:</label>
+                                <input type="text" id="expense-description" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-quantity">Quantity:</label>
+                                <input type="number" id="expense-quantity" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-unit-cost">Unit Cost:</label>
+                                <input type="number" id="expense-unit-cost" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-total">Total Cost:</label>
+                                <input type="number" id="expense-total" step="0.01" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-supplier">Supplier:</label>
+                                <input type="text" id="expense-supplier">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit">Add Expense</button>
+                                <button type="button" id="cancel-expense-edit" class="cancel-btn" style="display:none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table id="expense-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Season</th>
+                                    <th>Field</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Cost</th>
+                                    <th>Total Cost</th>
+                                    <th>Supplier</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-tbody">
+                                <tr class="no-data-row">
+                                    <td colspan="10">No expense records found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="table-summary">
+                            <strong>Total Expenses: ₵<span id="expense-summary">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Employee Salaries Section -->
+            <section id="employee-salaries" class="section">
+                <h2>Employee Salaries</h2>
+                <div class="section-header">
+                    <div class="filter-controls">
+                        <label for="salary-year-filter">Filter by Year:</label>
+                        <select id="salary-year-filter">
+                            <option value="">All Years</option>
+                        </select>
+                        <button type="button" id="export-salary-csv-btn" class="export-btn">Export to CSV</button>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="form-container">
+                        <form id="salary-form" class="data-form">
+                            <div class="form-group">
+                                <label for="salary-date">Date:</label>
+                                <input type="date" id="salary-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-employee">Employee Name:</label>
+                                <input type="text" id="salary-employee" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-position">Position:</label>
+                                <input type="text" id="salary-position" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-hours">Hours Worked:</label>
+                                <input type="number" id="salary-hours" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-rate">Hourly Rate:</label>
+                                <input type="number" id="salary-rate" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-overtime">Overtime Hours:</label>
+                                <input type="number" id="salary-overtime" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-total">Total Salary:</label>
+                                <input type="number" id="salary-total" step="0.01" readonly>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit">Add Salary Record</button>
+                                <button type="button" id="cancel-salary-edit" class="cancel-btn" style="display:none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table id="salary-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Position</th>
+                                    <th>Hours</th>
+                                    <th>Rate</th>
+                                    <th>Overtime</th>
+                                    <th>Total Salary</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salary-tbody">
+                                <tr class="no-data-row">
+                                    <td colspan="8">No salary records found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="table-summary">
+                            <strong>Total Salaries: ₵<span id="salary-summary">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Soil Monitoring Section -->
+            <section id="soil-monitoring" class="section">
+                <h2>Soil Monitoring</h2>
+                <div class="section-header">
+                    <div class="filter-controls">
+                        <label for="soil-year-filter">Filter by Year:</label>
+                        <select id="soil-year-filter">
+                            <option value="">All Years</option>
+                        </select>
+                        <button type="button" id="export-soil-csv-btn" class="export-btn">Export to CSV</button>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="form-container">
+                        <h3 id="soil-form-title">Add Soil Reading</h3>
+                        <form id="soil-form" class="data-form">
+                            <div class="form-group">
+                                <label for="soil-date">Date:</label>
+                                <input type="date" id="soil-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-time">Time:</label>
+                                <input type="time" id="soil-time" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-crop">Crop:</label>
+                                <input type="text" id="soil-crop" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-field">Field:</label>
+                                <input type="text" id="soil-field" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-moisture">Moisture (%):</label>
+                                <input type="number" id="soil-moisture" step="0.1" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-ph">pH:</label>
+                                <input type="number" id="soil-ph" step="0.1" min="0" max="14" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-ec">EC (Electrical Conductivity):</label>
+                                <input type="number" id="soil-ec" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-humidity">Humidity (%):</label>
+                                <input type="number" id="soil-humidity" step="0.1" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-notes">Notes:</label>
+                                <textarea id="soil-notes" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">Add Reading</button>
+                                <button type="button" id="soil-cancel-edit" class="cancel-btn" style="display: none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Crop</th>
+                                    <th>Field</th>
+                                    <th>Moisture (%)</th>
+                                    <th>pH</th>
+                                    <th>EC</th>
+                                    <th>Humidity (%)</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="soil-tbody">
+                                <tr class="no-data-row">
+                                    <td colspan="11">No soil monitoring records found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Soil Monitoring Charts -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3>Moisture Levels Over Time</h3>
+                        <div class="chart-filter">
+                            <label for="moisture-crop-filter">Filter by Crop:</label>
+                            <select id="moisture-crop-filter">
+                                <option value="">All Crops</option>
+                            </select>
+                            <label for="moisture-field-filter">Filter by Field:</label>
+                            <select id="moisture-field-filter">
+                                <option value="">All Fields</option>
+                            </select>
+                        </div>
+                        <canvas id="moistureChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div class="print-actions">
+            <button onclick="window.print()" class="print-btn">Print Report</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

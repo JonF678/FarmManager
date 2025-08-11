@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sefake Farms - Crop Planning & Management</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2e7d32">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'%3E%3Cpath d='M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <img src="logo.png" alt="Sefake Farms Logo" class="farm-logo">
+                <div class="header-text">
+                    <h1>Sefake Farms - Crop Planning</h1>
+                    <p class="tagline">Harvesting happiness, one crop at a time</p>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <span id="online-status" class="status-badge online">Online</span>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tab-navigation">
+            <button class="tab-button active" data-tab="planner">Crop Planner</button>
+            <button class="tab-button" data-tab="crops">Crop Data</button>
+            <button class="tab-button" data-tab="rotation">Rotation</button>
+            <button class="tab-button" data-tab="financial">Financial</button>
+            <button class="tab-button" data-tab="success">Success</button>
+            <button class="tab-button" data-tab="summary">Summary</button>
+            <button class="tab-button" data-tab="charts">Charts</button>
+        </nav>
+
+        <!-- Tab Content -->
+        <main class="main-content">
+            <!-- Crop Planner Tab -->
+            <div id="planner-tab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Crop Planning</h2>
+                    <button id="add-crop-btn" class="btn btn-primary">+ Add Crop Entry</button>
+                </div>
+
+                <!-- Add Crop Form -->
+                <div id="add-crop-form" class="form-container hidden">
+                    <h3>Add New Crop Entry</h3>
+                    <form id="crop-entry-form">
+                        <div class="form-group">
+                            <label for="crop-select">Crop:</label>
+                            <select id="crop-select" required>
+                                <option value="">Select a crop...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-date">Planting Date:</label>
+                            <input type="date" id="planting-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="acres-used">Acres Used:</label>
+                            <input type="number" id="acres-used" min="0.1" step="0.1" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Add Entry</button>
+                            <button type="button" id="cancel-add" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Crop Entries Table -->
+                <div class="table-container">
+                    <table id="crop-entries-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Crop</th>
+                                <th>Planting Date</th>
+                                <th>Harvest Date</th>
+                                <th>Acres Used</th>
+                                <th>Yield (Planned vs Actual)</th>
+                                <th>Revenue (Planned vs Actual)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crop-entries-tbody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                    <div id="no-entries-message" class="empty-state">
+                        <p>No crop entries yet. Click "Add Crop Entry" to get started.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crop Data Tab -->
+            <div id="crops-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Crop Database</h2>
+                    <button id="add-crop-data-btn" class="btn btn-primary">+ Add Crop</button>
+                    <button id="reset-crop-data-btn" class="btn btn-secondary">Reset to Defaults</button>
+                </div>
+
+                <!-- Add/Edit Crop Data Form -->
+                <div id="crop-data-form" class="form-container hidden">
+                    <h3 id="crop-data-form-title">Add New Crop</h3>
+                    <form id="crop-data-entry-form">
+                        <div class="form-group">
+                            <label for="crop-name">Crop Name:</label>
+                            <input type="text" id="crop-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price-per-unit">Price per Unit (₵):</label>
+                            <input type="number" id="price-per-unit" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="yield-per-acre">Yield per Acre:</label>
+                            <input type="number" id="yield-per-acre" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="yield-unit">Yield Unit:</label>
+                            <select id="yield-unit" required>
+                                <option value="">Select unit</option>
+                                <option value="kg">Kilograms (kg)</option>
+                                <option value="tons">Tons</option>
+                                <option value="baskets">Baskets</option>
+                                <option value="bags">Bags</option>
+                                <option value="crates">Crates</option>
+                                <option value="boxes">Boxes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="days-to-transplant">Days to Transplant:</label>
+                            <input type="number" id="days-to-transplant" min="0" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="days-to-maturity">Days to Maturity:</label>
+                            <input type="number" id="days-to-maturity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-per-acre">Expense per Acre (₵):</label>
+                            <input type="number" id="expense-per-acre" min="0" step="0.01" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rotation-group">Rotation Group:</label>
+                            <select id="rotation-group" required>
+                                <option value="">Select rotation group...</option>
+                                <option value="Nightshades">Nightshades</option>
+                                <option value="Leafy Greens">Leafy Greens</option>
+                                <option value="Root Vegetables">Root Vegetables</option>
+                                <option value="Legumes">Legumes</option>
+                                <option value="Cucurbits">Cucurbits</option>
+                                <option value="Grasses">Grasses</option>
+                                <option value="Alliums">Alliums</option>
+                                <option value="Brassicas">Brassicas</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Crop</button>
+                            <button type="button" id="cancel-crop-data" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Crop Data Table -->
+                <div class="table-container">
+                    <table id="crop-data-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Crop Name</th>
+                                <th>Price per Unit (₵)</th>
+                                <th>Yield per Acre</th>
+                                <th>Yield Unit</th>
+                                <th>Days to Transplant</th>
+                                <th>Days to Maturity</th>
+                                <th>Expense per Acre (₵)</th>
+                                <th>Rotation Group</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crop-data-tbody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Crop Rotation Tab -->
+            <div id="rotation-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Crop Rotation Planning</h2>
+                    <button id="generate-rotation-plan" class="btn btn-primary">Generate Rotation Plan</button>
+                </div>
+
+                <div class="rotation-container">
+                    <div class="rotation-suggestions">
+                        <h3>Rotation Recommendations</h3>
+                        <div id="rotation-suggestions-content">
+                            <p class="empty-state">Click "Generate Rotation Plan" to see crop rotation suggestions based on your entries.</p>
+                        </div>
+                    </div>
+
+                    <div class="companion-planting">
+                        <h3>Companion Planting Guide</h3>
+                        <div id="companion-planting-content">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Reporting Tab -->
+            <div id="financial-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Financial Analysis</h2>
+                    <div class="year-selector">
+                        <label for="financial-year-select">Year:</label>
+                        <select id="financial-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="financial-container">
+                    <div class="financial-stats">
+                        <div class="stat-card profit-card">
+                            <h3>Total Profit</h3>
+                            <div id="total-profit" class="stat-value">₵0.00</div>
+                        </div>
+                        <div class="stat-card expense-card">
+                            <h3>Total Expenses</h3>
+                            <div id="total-expenses" class="stat-value">₵0.00</div>
+                        </div>
+                        <div class="stat-card margin-card">
+                            <h3>Average Profit Margin</h3>
+                            <div id="average-margin" class="stat-value">0%</div>
+                        </div>
+                        <div class="stat-card roi-card">
+                            <h3>Return on Investment</h3>
+                            <div id="roi" class="stat-value">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="financial-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Crop</th>
+                                    <th>Revenue (₵)</th>
+                                    <th>Expenses (₵)</th>
+                                    <th>Profit (₵)</th>
+                                    <th>Margin (%)</th>
+                                    <th>ROI (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financial-tbody">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crop Success Metrics Tab -->
+            <div id="success-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Crop Success Metrics</h2>
+                    <div class="year-selector">
+                        <label for="success-year-select">Year:</label>
+                        <select id="success-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="success-container">
+                    <div class="success-overview">
+                        <div class="success-summary">
+                            <h3>Performance Overview</h3>
+                            <div id="overall-success-rate" class="success-rate-display">
+                                <div class="success-circle">
+                                    <div class="success-percentage">0%</div>
+                                    <div class="success-label">Overall Success</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="crop-success-meters">
+                        <h3>Individual Crop Performance</h3>
+                        <div id="success-meters-container">
+                            <!-- Dynamic progress bars will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Tab -->
+            <div id="summary-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Monthly Revenue Summary</h2>
+                    <div class="year-selector">
+                        <label for="summary-year-select">Year:</label>
+                        <select id="summary-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="summary-container">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <h3>Total Annual Revenue</h3>
+                            <div id="total-revenue" class="stat-value">₵0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Crop Entries</h3>
+                            <div id="total-entries" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Peak Month</h3>
+                            <div id="peak-month" class="stat-value">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <button id="export-csv-btn" class="btn btn-primary">Download CSV Report</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="monthly-summary-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Revenue</th>
+                                    <th>Crop Breakdown</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-summary-tbody">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                        <div id="no-summary-message" class="empty-state">
+                            <p>No crop entries to summarize. Add some crop planning entries to see the revenue projection.</p>
+                        </div>
+                    </div>
+
+                    <!-- Planned vs Actual Comparison Section -->
+                    <div class="comparison-section">
+                        <h3>Planned vs Actual Performance</h3>
+                        <div class="table-container">
+                            <table id="comparison-table" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Crop</th>
+                                        <th>Planned Yield</th>
+                                        <th>Planned Revenue</th>
+                                        <th>Actual Yield</th>
+                                        <th>Actual Revenue</th>
+                                        <th>Variance (₵)</th>
+                                        <th>Variance (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comparison-table-tbody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                            <div id="no-comparison-message" class="empty-state">
+                                <p>No comparison data available. Enter actual yields and revenues in the Crop Planner tab to see performance analysis.</p>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Charts -->
+                        <div class="comparison-charts">
+                            <div class="chart-section">
+                                <h4>Planned vs Actual Revenue</h4>
+                                <div class="chart-wrapper">
+                                    <canvas id="planned-vs-actual-chart"></canvas>
+                                    <div id="no-comparison-data" class="empty-state">
+                                        <p>No data available for comparison chart. Add crop entries to see planned vs actual analysis.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-section">
+                                <h4>Performance Variance</h4>
+                                <div class="chart-wrapper">
+                                    <canvas id="variance-chart"></canvas>
+                                    <div id="no-variance-data" class="empty-state">
+                                        <p>No variance data available. Enter actual yields and revenues to see performance variance.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Tab -->
+            <div id="charts-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Revenue Charts</h2>
+                    <div class="year-selector">
+                        <label for="charts-year-select">Year:</label>
+                        <select id="charts-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-section">
+                        <h3>Monthly Revenue Trend</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="monthly-revenue-chart"></canvas>
+                            <div id="no-chart-data-1" class="empty-state">
+                                <p>No data available for chart. Add crop entries to see revenue trends.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>Monthly Expense Trend</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="monthly-expense-chart"></canvas>
+                            <div id="no-expense-data" class="empty-state">
+                                <p>No expense data available for chart. Add crop entries with expenses to see expense trends.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>Crop Revenue Distribution</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="crop-distribution-chart"></canvas>
+                            <div id="no-chart-data-2" class="empty-state">
+                                <p>No data available for chart. Add crop entries to see revenue distribution.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>Crop Expense Distribution</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="expense-distribution-chart"></canvas>
+                            <div id="no-expense-distribution-data" class="empty-state">
+                                <p>No expense data available for chart. Add crop entries with expenses to see expense distribution.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section rainbow-section">
+                        <h3>Revenue Rainbow Visualization</h3>
+                        <div class="rainbow-container">
+                            <div id="revenue-rainbow" class="revenue-rainbow">
+                                <div class="rainbow-bars-container">
+                                    <!-- Dynamic rainbow bars will be inserted here -->
+                                </div>
+                                <div class="rainbow-legend">
+                                    <!-- Dynamic legend items will be inserted here -->
+                                </div>
+                            </div>
+                            <div id="no-rainbow-data" class="empty-state">
+                                <p>No data available for rainbow visualization. Add crop entries to see income streams.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Charts.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js?v=1.2.2"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Farm Management Platform</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c5530">
+    <meta name="description" content="Unified farm management platform with activity planning, management tracking, and revenue analysis">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="app-title">🌾 Farm Management Platform</h1>
+                <button id="menu-toggle" class="menu-toggle">☰</button>
+            </div>
+        </header>
+
+        <!-- Navigation Menu -->
+        <nav class="nav-menu" id="nav-menu">
+            <div class="nav-header">
+                <h2>Navigation</h2>
+                <button id="nav-close" class="nav-close">&times;</button>
+            </div>
+            <ul class="nav-list">
+                <li><a href="#dashboard" class="nav-link active" data-view="dashboard">🏠 Dashboard</a></li>
+                <li><a href="#farm-planner" class="nav-link" data-view="farm-planner">📋 Farm Planner</a></li>
+                <li><a href="#management-tracker" class="nav-link" data-view="management-tracker">📊 Management Tracker</a></li>
+                <li><a href="#revenue-planner" class="nav-link" data-view="revenue-planner">💰 Revenue Planner</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="app-view active">
+                <div class="dashboard-container">
+                    <div class="welcome-section">
+                        <h2>Welcome to Your Farm Management Platform</h2>
+                        <p>Manage all aspects of your farming operations from one unified interface</p>
+                    </div>
+                    
+                    <div class="app-cards">
+                        <div class="app-card" data-app="farm-planner">
+                            <div class="card-icon">📋</div>
+                            <h3>Farm Activity Planner</h3>
+                            <p>Plan crops, field layouts, and seasonal activities with Gantt-style scheduling</p>
+                            <button class="card-button" data-view="farm-planner">Open Planner</button>
+                        </div>
+                        
+                        <div class="app-card" data-app="management-tracker">
+                            <div class="card-icon">📊</div>
+                            <h3>Management Tracker</h3>
+                            <p>Track farm operations, expenses, equipment maintenance, and daily tasks</p>
+                            <button class="card-button" data-view="management-tracker">Open Tracker</button>
+                        </div>
+                        
+                        <div class="app-card" data-app="revenue-planner">
+                            <div class="card-icon">💰</div>
+                            <h3>Revenue Planner</h3>
+                            <p>Plan crop revenue, analyze profitability, and make data-driven financial decisions</p>
+                            <button class="card-button" data-view="revenue-planner">Open Planner</button>
+                        </div>
+                    </div>
+
+                    <div class="quick-stats">
+                        <h3>Quick Overview</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="active-tasks">0</div>
+                                <div class="stat-label">Active Tasks</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="upcoming-activities">0</div>
+                                <div class="stat-label">Upcoming Activities</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="total-fields">0</div>
+                                <div class="stat-label">Managed Fields</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="revenue-plans">0</div>
+                                <div class="stat-label">Revenue Plans</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Farm Planner View -->
+            <div id="farm-planner-view" class="app-view">
+                <div class="app-header">
+                    <button class="back-btn" data-view="dashboard">← Back to Dashboard</button>
+                    <h2>🌾 Farm Activity Planner</h2>
+                </div>
+                <iframe id="farm-planner-frame" src="apps/farm-planner.html" class="app-frame"></iframe>
+            </div>
+
+            <!-- Management Tracker View -->
+            <div id="management-tracker-view" class="app-view">
+                <div class="app-header">
+                    <button class="back-btn" data-view="dashboard">← Back to Dashboard</button>
+                    <h2>📊 Management Tracker</h2>
+                </div>
+                <iframe id="management-tracker-frame" src="apps/management-tracker.html" class="app-frame"></iframe>
+            </div>
+
+            <!-- Revenue Planner View -->
+            <div id="revenue-planner-view" class="app-view">
+                <div class="app-header">
+                    <button class="back-btn" data-view="dashboard">← Back to Dashboard</button>
+                    <h2>💰 Revenue Planner</h2>
+                </div>
+                <iframe id="revenue-planner-frame" src="apps/revenue-planner.html" class="app-frame"></iframe>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="sw-register.js"></script>
+</body>
+</html>

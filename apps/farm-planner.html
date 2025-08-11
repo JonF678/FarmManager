@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Activity Planner</title>
+    <link rel="stylesheet" href="../styles/farm-planner.css">
+    <meta name="theme-color" content="#2c5530">
+    <meta name="description" content="Offline farm activity planner with Gantt-style crop scheduling">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>🌾 Farm Activity Planner</h1>
+            <div class="header-controls">
+                <button id="add-task-btn" class="btn btn-primary">+ Add Task</button>
+                <button id="export-csv-btn" class="btn btn-secondary">Export CSV</button>
+                <button id="dark-mode-toggle" class="btn btn-icon">🌙</button>
+            </div>
+        </header>
+
+        <!-- Activity Legend -->
+        <div class="legend-container">
+            <h3>Activity Types</h3>
+            <div class="legend">
+                <span class="legend-item" data-activity="Nursery">
+                    <span class="legend-color nursery"></span>
+                    Nursery
+                </span>
+                <span class="legend-item" data-activity="Transplanting">
+                    <span class="legend-color transplanting"></span>
+                    Transplanting
+                </span>
+                <span class="legend-item" data-activity="Weeding">
+                    <span class="legend-color weeding"></span>
+                    Weeding
+                </span>
+                <span class="legend-item" data-activity="Harvest">
+                    <span class="legend-color harvest"></span>
+                    Harvest
+                </span>
+                <span class="legend-item" data-activity="Pesticides">
+                    <span class="legend-color pesticides"></span>
+                    Pesticides
+                </span>
+                <span class="legend-item" data-activity="Fertilizer">
+                    <span class="legend-color fertilizer"></span>
+                    Fertilizer
+                </span>
+                <span class="legend-item" data-activity="Land preparation">
+                    <span class="legend-color land-preparation"></span>
+                    Land preparation
+                </span>
+            </div>
+        </div>
+
+        <!-- Add Task Form -->
+        <div id="task-form-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="form-title">Add New Task</h2>
+                    <button id="close-modal" class="btn btn-icon">&times;</button>
+                </div>
+                <form id="task-form">
+                    <div class="form-group">
+                        <label for="crop-name">Crop Name:</label>
+                        <input type="text" id="crop-name" name="cropName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="field-name">Field:</label>
+                        <input type="text" id="field-name" name="fieldName" required placeholder="e.g., Field 1, North Field">
+                    </div>
+                    <div class="form-group">
+                        <label for="season">Season:</label>
+                        <select id="season" name="season" required>
+                            <option value="">Select season</option>
+                            <option value="A">Season A (Jan-Jun)</option>
+                            <option value="B">Season B (Jul-Dec)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity-type">Activity Type:</label>
+                        <select id="activity-type" name="activityType" required>
+                            <option value="">Select activity</option>
+                            <option value="Land preparation">Land preparation</option>
+                            <option value="Nursery">Nursery</option>
+                            <option value="Transplanting">Transplanting</option>
+                            <option value="Weeding">Weeding</option>
+                            <option value="Harvest">Harvest</option>
+                            <option value="Pesticides">Pesticides</option>
+                            <option value="Fertilizer">Fertilizer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="start-date">Start Date:</label>
+                        <input type="date" id="start-date" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Duration (days):</label>
+                        <input type="number" id="duration" name="duration" min="1" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancel-form" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Gantt Chart Container -->
+        <div class="gantt-container">
+            <div class="gantt-wrapper">
+                <div class="gantt-chart" id="gantt-chart">
+                    <!-- Chart will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Activities Summary -->
+        <div class="summary-container">
+            <h2>Upcoming Activities (Next 2 Weeks)</h2>
+            <div id="activities-summary" class="activities-summary">
+                <div class="empty-state" id="empty-state">
+                    <p>No activities scheduled for the next 2 weeks. Click "Add Task" to get started!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/farm-planner.js"></script>
+</body>
+</html>
