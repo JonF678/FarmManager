@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farm Management System</title>
-    <link rel="stylesheet" href="../styles/revenue-planner.css">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -12,14 +12,13 @@
         <header class="header">
             <div class="header-content">
                 <div class="logo-section">
-                    <img src="../assets/logo.svg" alt="Sefake Farms Logo" class="farm-logo">
+                    <img src="attached_assets/sefake-farms-high-resolution-logo-white_1751389473138.png" alt="Sefake Farms Logo" class="farm-logo">
                     <div class="header-text">
                         <h1>Sefake Farms</h1>
                         <p class="tagline">Harvesting happiness, one crop at a time</p>
                     </div>
                 </div>
                 <h2>Farm Management System</h2>
-                <button onclick="window.location.href='../index.html'" class="btn btn-secondary back-btn">← Back to Dashboard</button>
             </div>
             <nav class="nav">
                 <button class="nav-btn active" data-section="dashboard">Dashboard</button>
@@ -187,7 +186,7 @@
                             </thead>
                             <tbody id="production-tbody">
                                 <tr class="no-data-row">
-                                    <td colspan="9">No production records found</td>
+                                    <td colspan="7">No production records found</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -495,72 +494,101 @@
                 </div>
                 <div class="section-content">
                     <div class="form-container">
+                        <h3 id="soil-form-title">Add Soil Reading</h3>
                         <form id="soil-form" class="data-form">
                             <div class="form-group">
-                                <label for="soil-date">Test Date:</label>
+                                <label for="soil-date">Date:</label>
                                 <input type="date" id="soil-date" required>
                             </div>
                             <div class="form-group">
-                                <label for="soil-field">Field:</label>
-                                <input type="text" id="soil-field" placeholder="e.g., North Field, South Field" required>
+                                <label for="soil-time">Time:</label>
+                                <input type="time" id="soil-time" required>
                             </div>
                             <div class="form-group">
-                                <label for="soil-ph">pH Level:</label>
+                                <label for="soil-crop">Crop:</label>
+                                <input type="text" id="soil-crop" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-field">Field:</label>
+                                <input type="text" id="soil-field" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-moisture">Moisture (%):</label>
+                                <input type="number" id="soil-moisture" step="0.1" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil-ph">pH:</label>
                                 <input type="number" id="soil-ph" step="0.1" min="0" max="14" required>
                             </div>
                             <div class="form-group">
-                                <label for="soil-nitrogen">Nitrogen (N) %:</label>
-                                <input type="number" id="soil-nitrogen" step="0.01" min="0" required>
+                                <label for="soil-ec">EC (Electrical Conductivity):</label>
+                                <input type="number" id="soil-ec" step="0.01" min="0" required>
                             </div>
                             <div class="form-group">
-                                <label for="soil-phosphorus">Phosphorus (P) %:</label>
-                                <input type="number" id="soil-phosphorus" step="0.01" min="0" required>
+                                <label for="soil-humidity">Humidity (%):</label>
+                                <input type="number" id="soil-humidity" step="0.1" min="0" max="100" required>
                             </div>
                             <div class="form-group">
-                                <label for="soil-potassium">Potassium (K) %:</label>
-                                <input type="number" id="soil-potassium" step="0.01" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-organic-matter">Organic Matter %:</label>
-                                <input type="number" id="soil-organic-matter" step="0.01" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="soil-recommendations">Recommendations:</label>
-                                <textarea id="soil-recommendations" rows="3" placeholder="Fertilizer recommendations, soil amendments, etc."></textarea>
+                                <label for="soil-notes">Notes:</label>
+                                <textarea id="soil-notes" rows="3"></textarea>
                             </div>
                             <div class="form-actions">
-                                <button type="submit">Add Soil Test</button>
-                                <button type="button" id="cancel-soil-edit" class="cancel-btn" style="display:none;">Cancel</button>
+                                <button type="submit" class="submit-btn">Add Reading</button>
+                                <button type="button" id="soil-cancel-edit" class="cancel-btn" style="display: none;">Cancel</button>
                             </div>
                         </form>
                     </div>
                     <div class="table-container">
-                        <table id="soil-table" class="data-table">
+                        <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Test Date</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Crop</th>
                                     <th>Field</th>
-                                    <th>pH Level</th>
-                                    <th>Nitrogen %</th>
-                                    <th>Phosphorus %</th>
-                                    <th>Potassium %</th>
-                                    <th>Organic Matter %</th>
-                                    <th>Recommendations</th>
+                                    <th>Moisture (%)</th>
+                                    <th>pH</th>
+                                    <th>EC</th>
+                                    <th>Humidity (%)</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="soil-tbody">
                                 <tr class="no-data-row">
-                                    <td colspan="9">No soil test records found</td>
+                                    <td colspan="11">No soil monitoring records found</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+                
+                <!-- Soil Monitoring Charts -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3>Moisture Levels Over Time</h3>
+                        <div class="chart-filter">
+                            <label for="moisture-crop-filter">Filter by Crop:</label>
+                            <select id="moisture-crop-filter">
+                                <option value="">All Crops</option>
+                            </select>
+                            <label for="moisture-field-filter">Filter by Field:</label>
+                            <select id="moisture-field-filter">
+                                <option value="">All Fields</option>
+                            </select>
+                        </div>
+                        <canvas id="moistureChart"></canvas>
+                    </div>
+                </div>
             </section>
         </main>
+
+        <div class="print-actions">
+            <button onclick="window.print()" class="print-btn">Print Report</button>
+        </div>
     </div>
 
-    <script src="../js/revenue-planner.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
