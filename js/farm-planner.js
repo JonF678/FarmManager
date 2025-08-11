@@ -9,10 +9,16 @@ class FarmActivityPlanner {
     }
 
     init() {
+        // Clear localStorage if empty to show sample data
+        const stored = localStorage.getItem('farmPlannerTasks');
+        if (!stored || JSON.parse(stored).length === 0) {
+            localStorage.removeItem('farmPlannerTasks');
+        }
+        
         this.setupEventListeners();
+        this.loadSampleData(); // Add sample data if empty
         this.renderGanttChart();
         this.renderUpcomingActivities();
-        this.loadSampleData(); // Add some sample data if empty
     }
 
     loadSampleData() {
@@ -588,7 +594,14 @@ class FarmActivityPlanner {
     loadTasks() {
         try {
             const stored = localStorage.getItem('farmPlannerTasks');
-            return stored ? JSON.parse(stored) : [];
+            if (stored) {
+                const parsedTasks = JSON.parse(stored);
+                // Only use stored tasks if they exist and have data
+                if (parsedTasks.length > 0) {
+                    return parsedTasks;
+                }
+            }
+            return []; // Return empty array to allow sample data loading
         } catch (error) {
             console.error('Error loading tasks:', error);
             return [];

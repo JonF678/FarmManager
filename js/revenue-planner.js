@@ -9,6 +9,12 @@ class RevenuePlanner {
     }
     
     init() {
+        // Clear empty localStorage entries to show sample data
+        const savedEntries = localStorage.getItem('sefake-farm-entries');
+        if (!savedEntries || JSON.parse(savedEntries).length === 0) {
+            localStorage.removeItem('sefake-farm-entries');
+        }
+        
         this.loadDefaultCropData();
         this.loadFromStorage();
         this.setupEventListeners();
@@ -108,15 +114,17 @@ class RevenuePlanner {
             this.cropData = JSON.parse(savedCropData);
         }
         
-        if (savedEntries) {
+        if (savedEntries && savedEntries !== 'null') {
             const parsedEntries = JSON.parse(savedEntries);
             // Only use saved entries if they exist and have data
-            if (parsedEntries.length > 0) {
+            if (Array.isArray(parsedEntries) && parsedEntries.length > 0) {
                 this.cropEntries = parsedEntries;
-            } else {
-                // Clear empty localStorage and use sample data
-                localStorage.removeItem('sefake-farm-entries');
-                this.cropEntries = [
+                return; // Exit early if we have valid data
+            }
+        }
+        
+        // Add sample crop entries if none exist
+        this.cropEntries = [
                 {
                     id: 1,
                     cropName: 'Maize (Corn)',
@@ -167,7 +175,6 @@ class RevenuePlanner {
                 }
             ];
             this.saveToStorage();
-        }
     }
     
     saveToStorage() {
