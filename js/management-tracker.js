@@ -283,13 +283,20 @@ function handleSoilSubmit(e) {
     const formData = {
         id: currentEditingRecord ? currentEditingRecord.id : Date.now(),
         date: document.getElementById('soil-date').value,
+        time: document.getElementById('soil-time').value,
+        crop: document.getElementById('soil-crop').value,
         field: document.getElementById('soil-field').value,
+        moisture: parseFloat(document.getElementById('soil-moisture').value),
         ph: parseFloat(document.getElementById('soil-ph').value),
-        nitrogen: parseFloat(document.getElementById('soil-nitrogen').value),
-        phosphorus: parseFloat(document.getElementById('soil-phosphorus').value),
-        potassium: parseFloat(document.getElementById('soil-potassium').value),
-        organicMatter: parseFloat(document.getElementById('soil-organic-matter').value),
-        recommendations: document.getElementById('soil-recommendations').value
+        ec: parseFloat(document.getElementById('soil-ec').value),
+        humidity: parseFloat(document.getElementById('soil-humidity').value),
+        notes: document.getElementById('soil-notes').value,
+        status: getSoilStatus(
+            parseFloat(document.getElementById('soil-moisture').value),
+            parseFloat(document.getElementById('soil-ph').value),
+            parseFloat(document.getElementById('soil-ec').value),
+            parseFloat(document.getElementById('soil-humidity').value)
+        )
     };
 
     if (currentEditingRecord) {
@@ -303,6 +310,20 @@ function handleSoilSubmit(e) {
     renderTable('soil');
     e.target.reset();
     cancelEdit();
+}
+
+function getSoilStatus(moisture, ph, ec, humidity) {
+    // Simple status determination based on optimal ranges
+    const optimalMoisture = moisture >= 20 && moisture <= 60;
+    const optimalPH = ph >= 6.0 && ph <= 7.5;
+    const optimalEC = ec >= 0.5 && ec <= 2.0;
+    const optimalHumidity = humidity >= 40 && humidity <= 80;
+    
+    const optimalCount = [optimalMoisture, optimalPH, optimalEC, optimalHumidity].filter(Boolean).length;
+    
+    if (optimalCount >= 3) return 'Good';
+    if (optimalCount >= 2) return 'Fair';
+    return 'Poor';
 }
 
 // Table rendering
@@ -452,13 +473,15 @@ function createTableRow(type, record) {
             return `
                 <tr>
                     <td>${formatDate(record.date)}</td>
+                    <td>${record.time || '-'}</td>
+                    <td>${record.crop || '-'}</td>
                     <td>${record.field}</td>
+                    <td>${record.moisture}%</td>
                     <td>${record.ph}</td>
-                    <td>${record.nitrogen}%</td>
-                    <td>${record.phosphorus}%</td>
-                    <td>${record.potassium}%</td>
-                    <td>${record.organicMatter}%</td>
-                    <td>${record.recommendations || '-'}</td>
+                    <td>${record.ec}</td>
+                    <td>${record.humidity}%</td>
+                    <td><span class="status-badge ${record.status?.toLowerCase()}">${record.status}</span></td>
+                    <td>${record.notes || '-'}</td>
                     <td>${actions}</td>
                 </tr>
             `;
@@ -471,7 +494,7 @@ function getColumnCount(type) {
         case 'income': return 10;
         case 'expense': return 10;
         case 'salary': return 8;
-        case 'soil': return 9;
+        case 'soil': return 11;
         default: return 5;
     }
 }
@@ -845,13 +868,14 @@ function editRecord(type, id) {
             case 'overtime':
                 fieldId = `${formPrefix}-${key}`;
                 break;
+            case 'time':
+            case 'crop':
+            case 'moisture':
             case 'ph':
-            case 'nitrogen':
-            case 'phosphorus':
-            case 'potassium':
-            case 'organicMatter':
-            case 'recommendations':
-                fieldId = `${formPrefix}-${key === 'organicMatter' ? 'organic-matter' : key}`;
+            case 'ec':
+            case 'humidity':
+            case 'notes':
+                fieldId = `${formPrefix}-${key}`;
                 break;
             default:
                 fieldId = `${formPrefix}-${key}`;

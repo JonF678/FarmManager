@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farm Management System</title>
-    <link rel="stylesheet" href="../styles/management-tracker.css">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -12,14 +12,13 @@
         <header class="header">
             <div class="header-content">
                 <div class="logo-section">
-                    <img src="../assets/logo.svg" alt="Sefake Farms Logo" class="farm-logo">
+                    <img src="attached_assets/sefake-farms-high-resolution-logo-white_1751389473138.png" alt="Sefake Farms Logo" class="farm-logo">
                     <div class="header-text">
                         <h1>Sefake Farms</h1>
                         <p class="tagline">Harvesting happiness, one crop at a time</p>
                     </div>
                 </div>
                 <h2>Farm Management System</h2>
-                <button onclick="window.location.href='../index.html'" class="btn btn-secondary back-btn">← Back to Dashboard</button>
             </div>
             <nav class="nav">
                 <button class="nav-btn active" data-section="dashboard">Dashboard</button>
@@ -187,7 +186,7 @@
                             </thead>
                             <tbody id="production-tbody">
                                 <tr class="no-data-row">
-                                    <td colspan="9">No production records found</td>
+                                    <td colspan="7">No production records found</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -584,8 +583,12 @@
                 </div>
             </section>
         </main>
+
+        <div class="print-actions">
+            <button onclick="window.print()" class="print-btn">Print Report</button>
+        </div>
     </div>
 
-    <script src="../js/management-tracker.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

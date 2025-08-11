@@ -1,5 +1,5 @@
-// Management Tracker Application JavaScript
-class ManagementTracker {
+// Revenue Planner Application JavaScript
+class RevenuePlanner {
     constructor() {
         this.cropData = [];
         this.cropEntries = [];
@@ -24,7 +24,9 @@ class ManagementTracker {
         // Tab navigation
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', (e) => {
-                this.switchTab(e.target.dataset.tab);
+                const tabName = e.target.dataset.tab;
+                console.log('Switching to tab:', tabName);
+                this.switchTab(tabName);
             });
         });
         
@@ -138,6 +140,7 @@ class ManagementTracker {
     }
     
     updateTabDisplay(tabName) {
+        console.log('Updating tab display for:', tabName);
         switch(tabName) {
             case 'planner':
                 this.updateCropEntriesTable();
@@ -374,19 +377,19 @@ class ManagementTracker {
                 <td>
                     <div>Planned: ${entry.plannedYield.toFixed(1)} ${entry.cropInfo.yieldUnit}</div>
                     <div>Actual: <input type="number" value="${entry.actualYield || ''}" 
-                          onchange="tracker.updateActualValues(${entry.id}, this.value, null)" 
+                          onchange="revenuePlanner.updateActualValues(${entry.id}, this.value, null)" 
                           style="width: 80px; padding: 2px;" placeholder="Enter actual">
                     </div>
                 </td>
                 <td>
                     <div>Planned: ₵${entry.plannedRevenue.toFixed(2)}</div>
                     <div>Actual: <input type="number" value="${entry.actualRevenue || ''}" 
-                          onchange="tracker.updateActualValues(${entry.id}, null, this.value)" 
+                          onchange="revenuePlanner.updateActualValues(${entry.id}, null, this.value)" 
                           style="width: 80px; padding: 2px;" placeholder="Enter actual">
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-danger" onclick="tracker.deleteCropEntry(${entry.id})">
+                    <button class="btn btn-danger" onclick="revenuePlanner.deleteCropEntry(${entry.id})">
                         Delete
                     </button>
                 </td>
@@ -408,10 +411,10 @@ class ManagementTracker {
                 <td>₵${crop.expensePerAcre.toFixed(2)}</td>
                 <td>${crop.rotationGroup}</td>
                 <td>
-                    <button class="btn btn-secondary" onclick="tracker.showCropDataForm(tracker.cropData[${index}])">
+                    <button class="btn btn-secondary" onclick="revenuePlanner.showCropDataForm(revenuePlanner.cropData[${index}])">
                         Edit
                     </button>
-                    <button class="btn btn-danger" onclick="tracker.deleteCropData(${index})">
+                    <button class="btn btn-danger" onclick="revenuePlanner.deleteCropData(${index})">
                         Delete
                     </button>
                 </td>
@@ -782,11 +785,11 @@ class ManagementTracker {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.tracker = new ManagementTracker();
+    window.revenuePlanner = new RevenuePlanner();
     
     // Listen for online/offline events
-    window.addEventListener('online', () => tracker.checkOnlineStatus());
-    window.addEventListener('offline', () => tracker.checkOnlineStatus());
+    window.addEventListener('online', () => revenuePlanner.checkOnlineStatus());
+    window.addEventListener('offline', () => revenuePlanner.checkOnlineStatus());
 });
 
 // Service Worker registration for PWA functionality
