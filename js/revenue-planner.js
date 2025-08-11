@@ -441,11 +441,28 @@ class RevenuePlanner {
     updateActualValues(id, actualYield, actualRevenue) {
         const entry = this.cropEntries.find(e => e.id === id);
         if (entry) {
-            entry.actualYield = actualYield;
-            entry.actualRevenue = actualRevenue;
+            // Update actual values, converting to numbers and handling null/empty
+            if (actualYield !== null && actualYield !== '') {
+                entry.actualYield = parseFloat(actualYield) || 0;
+            }
+            if (actualRevenue !== null && actualRevenue !== '') {
+                entry.actualRevenue = parseFloat(actualRevenue) || 0;
+            }
+            
             this.saveToStorage();
             this.updateCropEntriesTable();
+            this.updateAllDisplays(); // Update all tabs with new data
         }
+    }
+    
+    calculateVarianceDisplay(actual, planned) {
+        if (!actual || !planned || planned === 0) return '';
+        
+        const variance = ((actual - planned) / planned) * 100;
+        const color = variance >= 0 ? '#28a745' : '#dc3545'; // green for positive, red for negative
+        const sign = variance >= 0 ? '+' : '';
+        
+        return `<span style="color: ${color}; font-weight: bold; font-size: 0.85em;">(${sign}${variance.toFixed(1)}%)</span>`;
     }
     
     updateCropEntriesTable() {
@@ -468,16 +485,20 @@ class RevenuePlanner {
                 <td>${entry.acresUsed} acres</td>
                 <td>
                     <div>Planned: ${entry.plannedYield.toFixed(1)} ${entry.cropInfo.yieldUnit}</div>
-                    <div>Actual: <input type="number" value="${entry.actualYield || ''}" 
-                          onchange="revenuePlanner.updateActualValues(${entry.id}, this.value, null)" 
-                          style="width: 80px; padding: 2px;" placeholder="Enter actual">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        Actual: <input type="number" value="${entry.actualYield || ''}" 
+                              onchange="window.revenuePlanner.updateActualValues(${entry.id}, this.value, null)" 
+                              style="width: 70px; padding: 2px;" placeholder="Enter actual">
+                        ${entry.actualYield ? this.calculateVarianceDisplay(entry.actualYield, entry.plannedYield) : ''}
                     </div>
                 </td>
                 <td>
                     <div>Planned: ₵${entry.plannedRevenue.toFixed(2)}</div>
-                    <div>Actual: <input type="number" value="${entry.actualRevenue || ''}" 
-                          onchange="revenuePlanner.updateActualValues(${entry.id}, null, this.value)" 
-                          style="width: 80px; padding: 2px;" placeholder="Enter actual">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        Actual: <input type="number" value="${entry.actualRevenue || ''}" 
+                              onchange="window.revenuePlanner.updateActualValues(${entry.id}, null, this.value)" 
+                              style="width: 70px; padding: 2px;" placeholder="Enter actual">
+                        ${entry.actualRevenue ? this.calculateVarianceDisplay(entry.actualRevenue, entry.plannedRevenue) : ''}
                     </div>
                 </td>
                 <td>
