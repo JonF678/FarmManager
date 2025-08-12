@@ -105,9 +105,11 @@ class FarmActivityPlanner {
         const datesHeader = document.getElementById('dates-header');
         datesHeader.innerHTML = '';
 
-        this.dateRange.forEach(date => {
+        this.dateRange.forEach((date, index) => {
             const dateColumn = document.createElement('div');
             dateColumn.className = 'date-column';
+            dateColumn.dataset.index = index;
+            dateColumn.dataset.date = this.formatDate(date);
             
             const dayNum = date.getDate().toString().padStart(2, '0');
             const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -150,10 +152,11 @@ class FarmActivityPlanner {
             timelineRow.dataset.crop = crop;
 
             // Create cells for each date
-            this.dateRange.forEach(date => {
+            this.dateRange.forEach((date, index) => {
                 const cell = document.createElement('div');
                 cell.className = 'timeline-cell';
                 cell.dataset.date = this.formatDate(date);
+                cell.dataset.index = index;
                 timelineRow.appendChild(cell);
             });
 
@@ -204,15 +207,14 @@ class FarmActivityPlanner {
             }
         }
         
-        // If dates are outside visible range, calculate approximate positions
+        // If start date not found in range, skip this task
         if (startIndex === -1) {
-            const daysDiff = Math.floor((startDate - rangeStart) / (24 * 60 * 60 * 1000));
-            startIndex = Math.max(0, daysDiff);
+            return null;
         }
         
+        // If end date not found, calculate it based on start + duration
         if (endIndex === -1) {
-            const daysDiff = Math.floor((endDate - rangeStart) / (24 * 60 * 60 * 1000));
-            endIndex = Math.min(this.dateRange.length - 1, daysDiff);
+            endIndex = Math.min(startIndex + task.duration - 1, this.dateRange.length - 1);
         }
         
         // Ensure we have valid indices
@@ -414,14 +416,17 @@ class FarmActivityPlanner {
 
     saveTask() {
         const formData = new FormData(document.getElementById('task-form'));
+        const startDateInput = formData.get('startDate');
+        const duration = parseInt(formData.get('duration'));
+        
         const taskData = {
             cropName: formData.get('cropName'),
             fieldName: formData.get('fieldName'),
             season: formData.get('season'),
             activityType: formData.get('activityType'),
-            startDate: formData.get('startDate'),
-            duration: parseInt(formData.get('duration')),
-            endDate: this.calculateEndDate(formData.get('startDate'), parseInt(formData.get('duration')))
+            startDate: startDateInput,
+            duration: duration,
+            endDate: this.calculateEndDate(startDateInput, duration)
         };
 
         if (this.currentEditingTask) {
@@ -438,6 +443,15 @@ class FarmActivityPlanner {
         }
 
         this.saveTasks();
+        
+        // Navigate to the month containing the task if not visible
+        const taskDate = new Date(startDateInput);
+        if (taskDate.getMonth() !== this.currentDate.getMonth() || 
+            taskDate.getFullYear() !== this.currentDate.getFullYear()) {
+            this.currentDate = new Date(taskDate.getFullYear(), taskDate.getMonth(), 1);
+            this.dateRange = this.generateDateRange();
+        }
+        
         this.renderGanttChart();
         this.renderUpcomingActivities();
         this.hideTaskForm();
