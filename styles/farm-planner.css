@@ -181,6 +181,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     overflow: hidden;
+    position: relative;
 }
 
 .timeline-header {
@@ -188,6 +189,9 @@ body {
     background-color: var(--primary-color);
     color: white;
     font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 
 .crop-header {
@@ -197,13 +201,13 @@ body {
     background-color: var(--primary-color);
     position: sticky;
     left: 0;
-    z-index: 10;
+    z-index: 21;
 }
 
 .dates-header {
     display: flex;
     flex: 1;
-    overflow-x: auto;
+    overflow-x: hidden;
 }
 
 .date-column {
@@ -221,7 +225,8 @@ body {
 .gantt-body {
     display: flex;
     max-height: 500px;
-    overflow-y: auto;
+    overflow: auto;
+    position: relative;
 }
 
 .crops-column {
@@ -230,7 +235,7 @@ body {
     border-right: 1px solid var(--border-color);
     position: sticky;
     left: 0;
-    z-index: 5;
+    z-index: 15;
 }
 
 .crop-row {
@@ -245,7 +250,7 @@ body {
 
 .timeline-grid {
     flex: 1;
-    overflow-x: auto;
+    position: relative;
 }
 
 .timeline-row {
@@ -260,6 +265,8 @@ body {
         transparent 60px
     );
     background-size: 60px 100%;
+    width: fit-content;
+    min-width: 100%;
 }
 
 .timeline-cell {

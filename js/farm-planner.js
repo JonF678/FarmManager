@@ -90,6 +90,7 @@ class FarmActivityPlanner {
         this.updateCurrentMonthYear();
         this.renderTimelineHeader();
         this.renderGanttBody();
+        this.setupScrollSynchronization();
     }
 
     updateCurrentMonthYear() {
@@ -228,8 +229,8 @@ class FarmActivityPlanner {
         activityBar.style.left = `${left}px`;
         activityBar.style.width = `${width}px`;
         activityBar.style.position = 'absolute';
-        activityBar.style.top = '0';
-        activityBar.style.height = '100%';
+        activityBar.style.top = '8px';
+        activityBar.style.height = '44px';
         activityBar.style.zIndex = '10';
         
         // Activity label
@@ -580,6 +581,24 @@ class FarmActivityPlanner {
         } catch (error) {
             console.error('Error saving tasks:', error);
         }
+    }
+
+    setupScrollSynchronization() {
+        const ganttBody = document.getElementById('gantt-body');
+        const datesHeader = document.getElementById('dates-header');
+        
+        // Remove existing scroll listeners to prevent duplicates
+        ganttBody.removeEventListener('scroll', this.syncScroll);
+        
+        // Store reference to bound function
+        this.syncScroll = (e) => {
+            // Synchronize horizontal scroll between header and body
+            if (datesHeader && ganttBody) {
+                datesHeader.scrollLeft = ganttBody.scrollLeft;
+            }
+        };
+        
+        ganttBody.addEventListener('scroll', this.syncScroll);
     }
 
     setupDarkModeToggle() {
