@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unified Farm Management Platform</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/unified-reports.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c5530">
     <meta name="description" content="Unified farm management platform with activity planning, management tracking, and revenue analysis">
@@ -28,6 +29,7 @@
             </div>
             <ul class="nav-list">
                 <li><a href="#dashboard" class="nav-link active" data-view="dashboard">🏠 Dashboard</a></li>
+                <li><a href="#unified-reports" class="nav-link" data-view="unified-reports">📈 Unified Reports</a></li>
                 <li><a href="#farm-planner" class="nav-link" data-view="farm-planner">📋 Farm Planner</a></li>
                 <li><a href="#management-tracker" class="nav-link" data-view="management-tracker">📊 Management Tracker</a></li>
                 <li><a href="#revenue-planner" class="nav-link" data-view="revenue-planner">💰 Revenue Planner</a></li>
@@ -86,6 +88,179 @@
                                 <div class="stat-number" id="revenue-plans">0</div>
                                 <div class="stat-label">Revenue Plans</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unified Reports View -->
+            <div id="unified-reports-view" class="app-view">
+                <div class="reports-container">
+                    <div class="reports-header">
+                        <h2>📈 Unified Farm Reports</h2>
+                        <div class="reports-controls">
+                            <select id="report-period">
+                                <option value="current-month">Current Month</option>
+                                <option value="last-month">Last Month</option>
+                                <option value="current-quarter">Current Quarter</option>
+                                <option value="current-year">Current Year</option>
+                                <option value="last-year">Last Year</option>
+                            </select>
+                            <button id="export-unified-report" class="btn btn-secondary">Export Report</button>
+                        </div>
+                    </div>
+
+                    <!-- Executive Summary -->
+                    <div class="executive-summary">
+                        <h3>Executive Summary</h3>
+                        <div class="summary-stats">
+                            <div class="summary-card">
+                                <div class="card-header">
+                                    <h4>Farm Performance</h4>
+                                    <div class="performance-indicator" id="overall-performance">75%</div>
+                                </div>
+                                <div class="card-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">Planned Activities</span>
+                                        <span class="metric-value" id="summary-planned">0</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">Completed Tasks</span>
+                                        <span class="metric-value" id="summary-completed">0</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">Revenue Generated</span>
+                                        <span class="metric-value" id="summary-revenue">₵0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="summary-card">
+                                <div class="card-header">
+                                    <h4>Financial Health</h4>
+                                    <div class="financial-indicator" id="financial-health">Good</div>
+                                </div>
+                                <div class="card-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">Total Expenses</span>
+                                        <span class="metric-value" id="summary-expenses">₵0</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">Net Profit</span>
+                                        <span class="metric-value" id="summary-profit">₵0</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">ROI</span>
+                                        <span class="metric-value" id="summary-roi">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="summary-card">
+                                <div class="card-header">
+                                    <h4>Operational Efficiency</h4>
+                                    <div class="efficiency-indicator" id="operational-efficiency">85%</div>
+                                </div>
+                                <div class="card-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">Active Fields</span>
+                                        <span class="metric-value" id="summary-fields">0</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">Equipment Utilization</span>
+                                        <span class="metric-value" id="summary-equipment">0%</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">Task Completion Rate</span>
+                                        <span class="metric-value" id="summary-completion">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Integrated Analytics -->
+                    <div class="integrated-analytics">
+                        <h3>Integrated Analytics</h3>
+                        
+                        <!-- Planning vs Execution vs Revenue Chart -->
+                        <div class="chart-section">
+                            <h4>Planning vs Execution vs Revenue Performance</h4>
+                            <div class="chart-container">
+                                <canvas id="integrated-performance-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Cross-Application Insights -->
+                        <div class="insights-grid">
+                            <div class="insight-card">
+                                <h4>Crop Planning Efficiency</h4>
+                                <div class="insight-metric">
+                                    <span class="metric-value" id="planning-efficiency">0%</span>
+                                    <span class="metric-trend" id="planning-trend">↗️</span>
+                                </div>
+                                <p class="insight-description" id="planning-insight">Measure how well planned activities translate to actual execution</p>
+                            </div>
+
+                            <div class="insight-card">
+                                <h4>Resource Utilization</h4>
+                                <div class="insight-metric">
+                                    <span class="metric-value" id="resource-utilization">0%</span>
+                                    <span class="metric-trend" id="resource-trend">→</span>
+                                </div>
+                                <p class="insight-description" id="resource-insight">Track equipment, labor, and field utilization across all operations</p>
+                            </div>
+
+                            <div class="insight-card">
+                                <h4>Profitability Index</h4>
+                                <div class="insight-metric">
+                                    <span class="metric-value" id="profitability-index">0.0</span>
+                                    <span class="metric-trend" id="profitability-trend">↗️</span>
+                                </div>
+                                <p class="insight-description" id="profitability-insight">Revenue per acre compared to planned targets</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cross-Application Data Table -->
+                    <div class="unified-data-table">
+                        <h3>Unified Operations Report</h3>
+                        <div class="table-controls">
+                            <input type="text" id="table-search" placeholder="Search operations..." class="search-input">
+                            <select id="table-filter" class="filter-select">
+                                <option value="all">All Operations</option>
+                                <option value="planning">Planning Activities</option>
+                                <option value="management">Management Tasks</option>
+                                <option value="revenue">Revenue Items</option>
+                            </select>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="unified-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Operation Type</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Planned Cost</th>
+                                        <th>Actual Cost</th>
+                                        <th>Revenue Impact</th>
+                                        <th>Efficiency</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unified-table-body">
+                                    <!-- Dynamic content will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Engine -->
+                    <div class="recommendations-section">
+                        <h3>AI-Powered Recommendations</h3>
+                        <div class="recommendations-grid" id="recommendations-container">
+                            <!-- Dynamic recommendations will be populated here -->
                         </div>
                     </div>
                 </div>
