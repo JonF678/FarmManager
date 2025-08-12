@@ -4,27 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sefake Farms - Crop Planning & Management</title>
-    <link rel="manifest" href="../manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2e7d32">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'%3E%3Cpath d='M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z'/%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../revenue-planner-original.css">
+    <link rel="stylesheet" href="revenue-planner-original.css">
 </head>
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
             <div class="header-brand">
-                <img src="../assets/logo.svg" alt="Sefake Farms Logo" class="farm-logo">
+                <img src="assets/logo.svg" alt="Sefake Farms Logo" class="farm-logo">
                 <div class="header-text">
                     <h1>Sefake Farms - Crop Planning</h1>
                     <p class="tagline">Harvesting happiness, one crop at a time</p>
                 </div>
             </div>
-            <div class="header-controls">
-                <button onclick="window.location.href='../index.html'" class="btn btn-secondary">← Back to Dashboard</button>
-                <div class="status-indicator">
-                    <span id="online-status" class="status-badge online">Online</span>
-                </div>
+            <div class="status-indicator">
+                <span id="online-status" class="status-badge online">Online</span>
             </div>
         </header>
 
@@ -189,30 +186,6 @@
                 </div>
             </div>
 
-            <!-- Crop Rotation Tab -->
-            <div id="rotation-tab" class="tab-content">
-                <div class="section-header">
-                    <h2>Crop Rotation Planning</h2>
-                    <button id="generate-rotation-plan" class="btn btn-primary">Generate Rotation Plan</button>
-                </div>
-
-                <div class="rotation-container">
-                    <div class="rotation-suggestions">
-                        <h3>Rotation Recommendations</h3>
-                        <div id="rotation-suggestions-content">
-                            <p class="empty-state">Click "Generate Rotation Plan" to see crop rotation suggestions based on your entries.</p>
-                        </div>
-                    </div>
-
-                    <div class="companion-planting">
-                        <h3>Companion Planting Guide</h3>
-                        <div id="companion-planting-content">
-                            <!-- Dynamic content -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Financial Reporting Tab -->
             <div id="financial-tab" class="tab-content">
                 <div class="section-header">
@@ -226,7 +199,7 @@
                 </div>
 
                 <div class="financial-container">
-                    <div class="financial-stats">
+                    <div class="summary-stats">
                         <div class="stat-card profit-card">
                             <h3>Total Profit</h3>
                             <div id="total-profit" class="stat-value">₵0.00</div>
@@ -252,10 +225,10 @@
                                     <th>Crop</th>
                                     <th>Planting Date</th>
                                     <th>Acres</th>
-                                    <th>Total Cost</th>
+                                    <th>Expenses</th>
                                     <th>Revenue</th>
                                     <th>Profit</th>
-                                    <th>Margin %</th>
+                                    <th>Margin</th>
                                 </tr>
                             </thead>
                             <tbody id="financial-tbody">
@@ -266,26 +239,18 @@
                 </div>
             </div>
 
-            <!-- Success Stories Tab -->
-            <div id="success-tab" class="tab-content">
-                <div class="section-header">
-                    <h2>Success Stories</h2>
-                </div>
-                <div class="success-container">
-                    <div class="success-story">
-                        <h3>Best Performing Crops</h3>
-                        <div id="best-crops-content">
-                            <p class="empty-state">Plant some crops to see success stories here!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Summary Tab -->
             <div id="summary-tab" class="tab-content">
                 <div class="section-header">
-                    <h2>Farm Summary</h2>
+                    <h2>Summary Report</h2>
+                    <div class="year-selector">
+                        <label for="summary-year-select">Year:</label>
+                        <select id="summary-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
                 </div>
+
                 <div class="summary-container">
                     <div class="summary-stats">
                         <div class="stat-card">
@@ -300,6 +265,10 @@
                             <h3>Active Plantings</h3>
                             <div id="active-plantings" class="stat-value">0</div>
                         </div>
+                        <div class="stat-card">
+                            <h3>Total Revenue</h3>
+                            <div id="total-revenue" class="stat-value">₵0.00</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -307,16 +276,22 @@
             <!-- Charts Tab -->
             <div id="charts-tab" class="tab-content">
                 <div class="section-header">
-                    <h2>Data Visualization</h2>
+                    <h2>Charts & Analytics</h2>
                 </div>
+
                 <div class="charts-container">
                     <div class="chart-section">
                         <h3>Revenue by Crop</h3>
-                        <canvas id="revenue-chart" class="chart-canvas"></canvas>
+                        <div class="chart-wrapper">
+                            <canvas id="revenue-chart"></canvas>
+                        </div>
                     </div>
+
                     <div class="chart-section">
-                        <h3>Profit Margins</h3>
-                        <canvas id="profit-chart" class="chart-canvas"></canvas>
+                        <h3>Profit Analysis</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="profit-chart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -324,13 +299,20 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../revenue-planner-original.js"></script>
+    <script src="revenue-planner-original.js"></script>
     <script>
-        // Initialize the Revenue Planner application
-        let app;
-        document.addEventListener('DOMContentLoaded', function() {
-            app = new CropPlanningApp();
-        });
+        // Service Worker registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

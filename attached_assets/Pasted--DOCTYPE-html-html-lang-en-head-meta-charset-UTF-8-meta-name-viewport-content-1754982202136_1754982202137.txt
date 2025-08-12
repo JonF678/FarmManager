@@ -4,27 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sefake Farms - Crop Planning & Management</title>
-    <link rel="manifest" href="../manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2e7d32">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'%3E%3Cpath d='M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z'/%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../revenue-planner-original.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
             <div class="header-brand">
-                <img src="../assets/logo.svg" alt="Sefake Farms Logo" class="farm-logo">
+                <img src="logo.png" alt="Sefake Farms Logo" class="farm-logo">
                 <div class="header-text">
                     <h1>Sefake Farms - Crop Planning</h1>
                     <p class="tagline">Harvesting happiness, one crop at a time</p>
                 </div>
             </div>
-            <div class="header-controls">
-                <button onclick="window.location.href='../index.html'" class="btn btn-secondary">← Back to Dashboard</button>
-                <div class="status-indicator">
-                    <span id="online-status" class="status-badge online">Online</span>
-                </div>
+            <div class="status-indicator">
+                <span id="online-status" class="status-badge online">Online</span>
             </div>
         </header>
 
@@ -250,12 +247,11 @@
                             <thead>
                                 <tr>
                                     <th>Crop</th>
-                                    <th>Planting Date</th>
-                                    <th>Acres</th>
-                                    <th>Total Cost</th>
-                                    <th>Revenue</th>
-                                    <th>Profit</th>
-                                    <th>Margin %</th>
+                                    <th>Revenue (₵)</th>
+                                    <th>Expenses (₵)</th>
+                                    <th>Profit (₵)</th>
+                                    <th>Margin (%)</th>
+                                    <th>ROI (%)</th>
                                 </tr>
                             </thead>
                             <tbody id="financial-tbody">
@@ -266,16 +262,35 @@
                 </div>
             </div>
 
-            <!-- Success Stories Tab -->
+            <!-- Crop Success Metrics Tab -->
             <div id="success-tab" class="tab-content">
                 <div class="section-header">
-                    <h2>Success Stories</h2>
+                    <h2>Crop Success Metrics</h2>
+                    <div class="year-selector">
+                        <label for="success-year-select">Year:</label>
+                        <select id="success-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
                 </div>
+
                 <div class="success-container">
-                    <div class="success-story">
-                        <h3>Best Performing Crops</h3>
-                        <div id="best-crops-content">
-                            <p class="empty-state">Plant some crops to see success stories here!</p>
+                    <div class="success-overview">
+                        <div class="success-summary">
+                            <h3>Performance Overview</h3>
+                            <div id="overall-success-rate" class="success-rate-display">
+                                <div class="success-circle">
+                                    <div class="success-percentage">0%</div>
+                                    <div class="success-label">Overall Success</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="crop-success-meters">
+                        <h3>Individual Crop Performance</h3>
+                        <div id="success-meters-container">
+                            <!-- Dynamic progress bars will be inserted here -->
                         </div>
                     </div>
                 </div>
@@ -284,21 +299,98 @@
             <!-- Summary Tab -->
             <div id="summary-tab" class="tab-content">
                 <div class="section-header">
-                    <h2>Farm Summary</h2>
+                    <h2>Monthly Revenue Summary</h2>
+                    <div class="year-selector">
+                        <label for="summary-year-select">Year:</label>
+                        <select id="summary-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
                 </div>
+
                 <div class="summary-container">
                     <div class="summary-stats">
                         <div class="stat-card">
-                            <h3>Total Crops Planted</h3>
-                            <div id="total-crops-planted" class="stat-value">0</div>
+                            <h3>Total Annual Revenue</h3>
+                            <div id="total-revenue" class="stat-value">₵0.00</div>
                         </div>
                         <div class="stat-card">
-                            <h3>Total Acres Used</h3>
-                            <div id="total-acres-used" class="stat-value">0</div>
+                            <h3>Active Crop Entries</h3>
+                            <div id="total-entries" class="stat-value">0</div>
                         </div>
                         <div class="stat-card">
-                            <h3>Active Plantings</h3>
-                            <div id="active-plantings" class="stat-value">0</div>
+                            <h3>Peak Month</h3>
+                            <div id="peak-month" class="stat-value">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <button id="export-csv-btn" class="btn btn-primary">Download CSV Report</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="monthly-summary-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Revenue</th>
+                                    <th>Crop Breakdown</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-summary-tbody">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                        <div id="no-summary-message" class="empty-state">
+                            <p>No crop entries to summarize. Add some crop planning entries to see the revenue projection.</p>
+                        </div>
+                    </div>
+
+                    <!-- Planned vs Actual Comparison Section -->
+                    <div class="comparison-section">
+                        <h3>Planned vs Actual Performance</h3>
+                        <div class="table-container">
+                            <table id="comparison-table" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Crop</th>
+                                        <th>Planned Yield</th>
+                                        <th>Planned Revenue</th>
+                                        <th>Actual Yield</th>
+                                        <th>Actual Revenue</th>
+                                        <th>Variance (₵)</th>
+                                        <th>Variance (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comparison-table-tbody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                            <div id="no-comparison-message" class="empty-state">
+                                <p>No comparison data available. Enter actual yields and revenues in the Crop Planner tab to see performance analysis.</p>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Charts -->
+                        <div class="comparison-charts">
+                            <div class="chart-section">
+                                <h4>Planned vs Actual Revenue</h4>
+                                <div class="chart-wrapper">
+                                    <canvas id="planned-vs-actual-chart"></canvas>
+                                    <div id="no-comparison-data" class="empty-state">
+                                        <p>No data available for comparison chart. Add crop entries to see planned vs actual analysis.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-section">
+                                <h4>Performance Variance</h4>
+                                <div class="chart-wrapper">
+                                    <canvas id="variance-chart"></canvas>
+                                    <div id="no-variance-data" class="empty-state">
+                                        <p>No variance data available. Enter actual yields and revenues to see performance variance.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -307,30 +399,79 @@
             <!-- Charts Tab -->
             <div id="charts-tab" class="tab-content">
                 <div class="section-header">
-                    <h2>Data Visualization</h2>
+                    <h2>Revenue Charts</h2>
+                    <div class="year-selector">
+                        <label for="charts-year-select">Year:</label>
+                        <select id="charts-year-select">
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
                 </div>
+
                 <div class="charts-container">
                     <div class="chart-section">
-                        <h3>Revenue by Crop</h3>
-                        <canvas id="revenue-chart" class="chart-canvas"></canvas>
+                        <h3>Monthly Revenue Trend</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="monthly-revenue-chart"></canvas>
+                            <div id="no-chart-data-1" class="empty-state">
+                                <p>No data available for chart. Add crop entries to see revenue trends.</p>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="chart-section">
-                        <h3>Profit Margins</h3>
-                        <canvas id="profit-chart" class="chart-canvas"></canvas>
+                        <h3>Monthly Expense Trend</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="monthly-expense-chart"></canvas>
+                            <div id="no-expense-data" class="empty-state">
+                                <p>No expense data available for chart. Add crop entries with expenses to see expense trends.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>Crop Revenue Distribution</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="crop-distribution-chart"></canvas>
+                            <div id="no-chart-data-2" class="empty-state">
+                                <p>No data available for chart. Add crop entries to see revenue distribution.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>Crop Expense Distribution</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="expense-distribution-chart"></canvas>
+                            <div id="no-expense-distribution-data" class="empty-state">
+                                <p>No expense data available for chart. Add crop entries with expenses to see expense distribution.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section rainbow-section">
+                        <h3>Revenue Rainbow Visualization</h3>
+                        <div class="rainbow-container">
+                            <div id="revenue-rainbow" class="revenue-rainbow">
+                                <div class="rainbow-bars-container">
+                                    <!-- Dynamic rainbow bars will be inserted here -->
+                                </div>
+                                <div class="rainbow-legend">
+                                    <!-- Dynamic legend items will be inserted here -->
+                                </div>
+                            </div>
+                            <div id="no-rainbow-data" class="empty-state">
+                                <p>No data available for rainbow visualization. Add crop entries to see income streams.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Loading Charts.js from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../revenue-planner-original.js"></script>
-    <script>
-        // Initialize the Revenue Planner application
-        let app;
-        document.addEventListener('DOMContentLoaded', function() {
-            app = new CropPlanningApp();
-        });
-    </script>
+    <script src="app.js?v=1.2.2"></script>
 </body>
 </html>

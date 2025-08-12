@@ -1,0 +1,72 @@
+{
+  "name": "Sefake Farms - Crop Planning & Management",
+  "short_name": "Sefake Farms",
+  "description": "Sefake Farms agricultural management app - Harvesting happiness, one crop at a time",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2e7d32",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "lang": "en",
+  "categories": ["productivity", "agriculture", "business"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192' fill='%232e7d32'%3E%3Cpath d='M96 16L104.72 69.08L176 76L104.72 82.92L96 136L87.28 82.92L16 76L87.28 69.08L96 16Z'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%232e7d32'%3E%3Cpath d='M256 42.67L277.87 184.21L469.33 213.33L277.87 242.45L256 384L234.13 242.45L42.67 213.33L234.13 184.21L256 42.67Z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Crop Entry",
+      "short_name": "Add Entry",
+      "description": "Quickly add a new crop planning entry",
+      "url": "./?action=add-entry",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'%3E%3Cpath d='M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z'/%3E%3C/svg%3E",
+          "sizes": "24x24",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "View Charts",
+      "short_name": "Charts",
+      "description": "View revenue charts and analytics",
+      "url": "./?tab=charts",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'%3E%3Cpath d='M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z'/%3E%3C/svg%3E",
+          "sizes": "24x24",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720' fill='%23f5f5f5'%3E%3Crect width='1280' height='720' fill='%23ffffff'/%3E%3Crect x='0' y='0' width='1280' height='80' fill='%232e7d32'/%3E%3Ctext x='40' y='50' font-family='Arial' font-size='24' fill='white'%3E🌾 Crop Planning %26 Revenue Projection%3C/text%3E%3Crect x='40' y='120' width='1200' height='560' fill='%23f9f9f9' stroke='%23e0e0e0'/%3E%3Ctext x='60' y='160' font-family='Arial' font-size='18' fill='%232e7d32'%3ECrop Planning Dashboard%3C/text%3E%3C/svg%3E",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "Crop Planning Dashboard"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}
