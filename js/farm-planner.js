@@ -183,26 +183,59 @@ class FarmActivityPlanner {
         }
 
         const activityBar = document.createElement('div');
-        activityBar.className = `activity-bar activity-${task.activityType.toLowerCase().replace(' ', '-')}`;
+        activityBar.className = `activity-bar activity-${task.activityType.toLowerCase().replace(/\s+/g, '-')}`;
         activityBar.dataset.taskId = task.id;
         activityBar.draggable = true;
 
-        // Calculate position and width
-        const startIndex = Math.max(0, Math.floor((startDate - rangeStart) / (24 * 60 * 60 * 1000)));
-        const endIndex = Math.min(this.dateRange.length - 1, Math.floor((endDate - rangeStart) / (24 * 60 * 60 * 1000)));
+        // Calculate position and width more accurately
+        let startIndex = -1;
+        let endIndex = -1;
         
-        const width = (endIndex - startIndex + 1) * 60; // 60px per day
-        const left = startIndex * 60;
+        // Find exact date positions in the date range
+        for (let i = 0; i < this.dateRange.length; i++) {
+            const currentDate = this.dateRange[i];
+            const currentDateStr = this.formatDate(currentDate);
+            
+            if (currentDateStr === task.startDate) {
+                startIndex = i;
+            }
+            if (currentDateStr === task.endDate) {
+                endIndex = i;
+            }
+        }
+        
+        // If dates are outside visible range, calculate approximate positions
+        if (startIndex === -1) {
+            const daysDiff = Math.floor((startDate - rangeStart) / (24 * 60 * 60 * 1000));
+            startIndex = Math.max(0, daysDiff);
+        }
+        
+        if (endIndex === -1) {
+            const daysDiff = Math.floor((endDate - rangeStart) / (24 * 60 * 60 * 1000));
+            endIndex = Math.min(this.dateRange.length - 1, daysDiff);
+        }
+        
+        // Ensure we have valid indices
+        startIndex = Math.max(0, Math.min(startIndex, this.dateRange.length - 1));
+        endIndex = Math.max(startIndex, Math.min(endIndex, this.dateRange.length - 1));
+        
+        const columnWidth = 60; // Must match CSS .date-column width
+        const width = (endIndex - startIndex + 1) * columnWidth;
+        const left = startIndex * columnWidth;
 
         activityBar.style.left = `${left}px`;
         activityBar.style.width = `${width}px`;
+        activityBar.style.position = 'absolute';
+        activityBar.style.top = '0';
+        activityBar.style.height = '100%';
+        activityBar.style.zIndex = '10';
         
         // Activity label
         const activityType = task.activityType;
         const duration = task.duration;
         activityBar.innerHTML = `
-            <div>${activityType}</div>
-            <div>(${duration}d)</div>
+            <span class="activity-label">${activityType}</span>
+            <span class="activity-duration">(${duration}d)</span>
         `;
 
         // Add drag and drop functionality
@@ -235,9 +268,11 @@ class FarmActivityPlanner {
             
             const deltaX = e.clientX - startX;
             const newLeft = startLeft + deltaX;
-            const snappedLeft = Math.round(newLeft / 60) * 60; // Snap to day columns
+            const columnWidth = 60;
+            const snappedLeft = Math.round(newLeft / columnWidth) * columnWidth; // Snap to day columns
+            const maxLeft = (this.dateRange.length - 1) * columnWidth;
             
-            element.style.left = `${Math.max(0, snappedLeft)}px`;
+            element.style.left = `${Math.max(0, Math.min(snappedLeft, maxLeft))}px`;
         };
 
         const onMouseUp = (e) => {
@@ -248,13 +283,21 @@ class FarmActivityPlanner {
             
             // Calculate new date
             const newLeft = parseInt(element.style.left);
-            const dayOffset = Math.round(newLeft / 60);
-            const newStartDate = new Date(this.dateRange[0]);
-            newStartDate.setDate(newStartDate.getDate() + dayOffset);
+            const columnWidth = 60;
+            const dayOffset = Math.round(newLeft / columnWidth);
             
-            // Update task
-            task.startDate = this.formatDate(newStartDate);
-            task.endDate = this.calculateEndDate(task.startDate, task.duration);
+            // Ensure dayOffset is within valid range
+            if (dayOffset >= 0 && dayOffset < this.dateRange.length) {
+                const newStartDate = new Date(this.dateRange[dayOffset]);
+                
+                // Update task
+                task.startDate = this.formatDate(newStartDate);
+                task.endDate = this.calculateEndDate(task.startDate, task.duration);
+            } else {
+                // Revert position if out of bounds
+                element.style.left = `${startLeft}px`;
+                return;
+            }
             
             this.saveTasks();
             this.renderUpcomingActivities();
@@ -402,7 +445,8 @@ class FarmActivityPlanner {
 
     calculateEndDate(startDate, duration) {
         const start = new Date(startDate);
-        const end = new Date(start.getTime() + (duration * 24 * 60 * 60 * 1000));
+        // Duration is inclusive, so subtract 1 day to get the actual end date
+        const end = new Date(start.getTime() + ((duration - 1) * 24 * 60 * 60 * 1000));
         return this.formatDate(end);
     }
 

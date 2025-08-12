@@ -208,11 +208,13 @@ body {
 
 .date-column {
     min-width: 60px;
+    width: 60px;
     padding: 0.75rem 0.25rem;
     text-align: center;
     border-right: 1px solid rgba(255,255,255,0.3);
     font-size: 0.8rem;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* Gantt Body */
@@ -262,8 +264,10 @@ body {
 
 .timeline-cell {
     min-width: 60px;
+    width: 60px;
     border-right: 1px solid var(--grid-color);
     position: relative;
+    flex-shrink: 0;
 }
 
 /* Activity Bars */
@@ -276,6 +280,7 @@ body {
     font-size: 0.75rem;
     font-weight: bold;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: move;
@@ -283,8 +288,19 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     text-align: center;
-    padding: 2px;
-    line-height: 1.2;
+    padding: 2px 4px;
+    line-height: 1.1;
+    z-index: 10;
+}
+
+.activity-bar .activity-label {
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+
+.activity-bar .activity-duration {
+    font-size: 0.6rem;
+    opacity: 0.9;
 }
 
 .activity-bar:hover {
