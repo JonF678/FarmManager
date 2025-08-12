@@ -17,19 +17,19 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Farm Management PWA"
+args = "Farm PWA Server"
 
 [[workflows.workflow]]
-name = "Farm Management PWA"
+name = "Farm PWA Server"
 author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python simple_server.py"
-waitForPort = 8080
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[ports]]
 localPort = 5000

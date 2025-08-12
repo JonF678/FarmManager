@@ -5,6 +5,83 @@
     box-sizing: border-box;
 }
 
+/* Variance Indicators */
+.planned-actual-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+}
+
+.planned-data, .actual-data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    font-size: 0.9em;
+}
+
+.data-label {
+    font-weight: 600;
+    color: #555;
+    margin-right: 8px;
+}
+
+.actual-input-field {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.9em;
+    width: 80px;
+    text-align: right;
+}
+
+.actual-input-field:focus {
+    outline: none;
+    border-color: #345187;
+    box-shadow: 0 0 0 2px rgba(52, 81, 135, 0.1);
+}
+
+.variance-indicator {
+    margin-top: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85em;
+    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.variance-positive {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #2e7d32;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.variance-negative {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: #c62828;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.variance-arrow {
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+}
+
+.arrow-up {
+    color: #4caf50;
+}
+
+.arrow-down {
+    color: #f44336;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;

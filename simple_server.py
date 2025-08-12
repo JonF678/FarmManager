@@ -16,7 +16,7 @@ class SimpleHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Expires', '0')
         super().end_headers()
 
-PORT = 8080
+PORT = 5000
 Handler = SimpleHandler
 
 with socketserver.TCPServer(("0.0.0.0", PORT), Handler) as httpd:

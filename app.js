@@ -333,51 +333,93 @@ class CropPlanningApp {
 
         if (noEntriesMsg) noEntriesMsg.style.display = 'none';
         
-        tbody.innerHTML = this.data.entries.map(entry => `
-            <tr>
-                <td>${entry.cropName}</td>
-                <td>${this.formatDate(entry.plantingDate)}</td>
-                <td>${this.formatDate(entry.harvestDate)}</td>
-                <td>${entry.acresUsed}</td>
-                <td>
-                    <div class="planned-actual-container">
-                        <div class="planned-data">
-                            <span class="data-label">Planned:</span>
-                            <span>${entry.plannedYield.toFixed(1)} ${entry.crop.yieldUnit}</span>
+        tbody.innerHTML = this.data.entries.map(entry => {
+            // Calculate variances
+            const yieldVariance = this.calculateVariance(entry.plannedYield, entry.actualYield);
+            const revenueVariance = this.calculateVariance(entry.plannedRevenue, entry.actualRevenue);
+            
+            return `
+                <tr>
+                    <td>${entry.cropName}</td>
+                    <td>${this.formatDate(entry.plantingDate)}</td>
+                    <td>${this.formatDate(entry.harvestDate)}</td>
+                    <td>${entry.acresUsed}</td>
+                    <td>
+                        <div class="planned-actual-container">
+                            <div class="planned-data">
+                                <span class="data-label">Planned:</span>
+                                <span>${entry.plannedYield.toFixed(1)} ${entry.crop.yieldUnit}</span>
+                            </div>
+                            <div class="actual-data">
+                                <span class="data-label">Actual:</span>
+                                <input type="number" 
+                                       class="actual-input-field" 
+                                       placeholder="${entry.actualYield || ''}"
+                                       value="${entry.actualYield || ''}"
+                                       onchange="window.app.updateActualYield('${entry.id}', this.value)"
+                                       onfocus="this.select()">
+                            </div>
+                            ${yieldVariance ? `
+                                <div class="variance-indicator ${yieldVariance.class}">
+                                    ${yieldVariance.display}
+                                    <div class="variance-arrow ${yieldVariance.arrowClass}">
+                                        ${yieldVariance.arrow}
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
-                        <div class="actual-input">
-                            <span class="data-label">Actual:</span>
-                            <input type="number" 
-                                   class="actual-input-field" 
-                                   placeholder="Enter actual"
-                                   value="${entry.actualYield || ''}"
-                                   onchange="window.app.updateActualYield('${entry.id}', this.value)">
+                    </td>
+                    <td>
+                        <div class="planned-actual-container">
+                            <div class="planned-data">
+                                <span class="data-label">Planned:</span>
+                                <span>₵${entry.plannedRevenue.toFixed(2)}</span>
+                            </div>
+                            <div class="actual-data">
+                                <span class="data-label">Actual:</span>
+                                <input type="number" 
+                                       class="actual-input-field" 
+                                       placeholder="${entry.actualRevenue || ''}"
+                                       value="${entry.actualRevenue || ''}"
+                                       onchange="window.app.updateActualRevenue('${entry.id}', this.value)"
+                                       onfocus="this.select()">
+                            </div>
+                            ${revenueVariance ? `
+                                <div class="variance-indicator ${revenueVariance.class}">
+                                    ${revenueVariance.display}
+                                    <div class="variance-arrow ${revenueVariance.arrowClass}">
+                                        ${revenueVariance.arrow}
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="planned-actual-container">
-                        <div class="planned-data">
-                            <span class="data-label">Planned:</span>
-                            <span>₵${entry.plannedRevenue.toFixed(2)}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-small btn-danger" onclick="window.app.deleteCropEntry('${entry.id}')">Delete</button>
                         </div>
-                        <div class="actual-input">
-                            <span class="data-label">Actual:</span>
-                            <input type="number" 
-                                   class="actual-input-field" 
-                                   placeholder="Enter actual"
-                                   value="${entry.actualRevenue || ''}"
-                                   onchange="window.app.updateActualRevenue('${entry.id}', this.value)">
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-small btn-danger" onclick="window.app.deleteCropEntry('${entry.id}')">Delete</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    calculateVariance(planned, actual) {
+        if (!actual || actual === 0 || !planned || planned === 0) {
+            return null;
+        }
+        
+        const variance = ((actual - planned) / planned) * 100;
+        const isPositive = variance >= 0;
+        const absVariance = Math.abs(variance);
+        
+        return {
+            percentage: variance,
+            display: `${isPositive ? '+' : '-'}${absVariance.toFixed(1)}%`,
+            class: isPositive ? 'variance-positive' : 'variance-negative',
+            arrow: isPositive ? '📈' : '📉',
+            arrowClass: isPositive ? 'arrow-up' : 'arrow-down'
+        };
     }
 
     updateActualYield(entryId, value) {
@@ -385,6 +427,7 @@ class CropPlanningApp {
         if (entry) {
             entry.actualYield = value ? parseFloat(value) : null;
             this.saveData();
+            this.renderCropEntries(); // Re-render to show variance
             this.updateFinancialReports();
             this.updateSummaryReport();
             this.updateSuccessMetrics();
@@ -396,6 +439,7 @@ class CropPlanningApp {
         if (entry) {
             entry.actualRevenue = value ? parseFloat(value) : null;
             this.saveData();
+            this.renderCropEntries(); // Re-render to show variance
             this.updateFinancialReports();
             this.updateSummaryReport();
             this.updateSuccessMetrics();
