@@ -51,17 +51,17 @@
                     <form id="crop-entry-form">
                         <div class="form-group">
                             <label for="crop-select">Crop:</label>
-                            <select id="crop-select" required>
+                            <select id="crop-select" name="crop-select" required>
                                 <option value="">Select a crop...</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="planting-date">Planting Date:</label>
-                            <input type="date" id="planting-date" required>
+                            <input type="date" id="planting-date" name="planting-date" required>
                         </div>
                         <div class="form-group">
                             <label for="acres-used">Acres Used:</label>
-                            <input type="number" id="acres-used" min="0.1" step="0.1" required>
+                            <input type="number" id="acres-used" name="acres-used" min="0.1" step="0.1" required>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">Add Entry</button>
@@ -111,19 +111,19 @@
                     <form id="crop-data-entry-form">
                         <div class="form-group">
                             <label for="crop-name">Crop Name:</label>
-                            <input type="text" id="crop-name" required>
+                            <input type="text" id="crop-name" name="crop-name" required>
                         </div>
                         <div class="form-group">
                             <label for="price-per-unit">Price per Unit (₵):</label>
-                            <input type="number" id="price-per-unit" min="0" step="0.01" required>
+                            <input type="number" id="price-per-unit" name="price-per-unit" min="0" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="yield-per-acre">Yield per Acre:</label>
-                            <input type="number" id="yield-per-acre" min="0" step="0.1" required>
+                            <input type="number" id="yield-per-acre" name="yield-per-acre" min="0" step="0.1" required>
                         </div>
                         <div class="form-group">
                             <label for="yield-unit">Yield Unit:</label>
-                            <select id="yield-unit" required>
+                            <select id="yield-unit" name="yield-unit" required>
                                 <option value="kg">Kilograms (kg)</option>
                                 <option value="tonnes">Tonnes</option>
                                 <option value="lbs">Pounds (lbs)</option>
@@ -134,19 +134,19 @@
                         </div>
                         <div class="form-group">
                             <label for="days-to-transplant">Days to Transplant:</label>
-                            <input type="number" id="days-to-transplant" min="0" required>
+                            <input type="number" id="days-to-transplant" name="days-to-transplant" min="0" required>
                         </div>
                         <div class="form-group">
                             <label for="days-to-maturity">Days to Maturity:</label>
-                            <input type="number" id="days-to-maturity" min="1" required>
+                            <input type="number" id="days-to-maturity" name="days-to-maturity" min="1" required>
                         </div>
                         <div class="form-group">
                             <label for="expense-per-acre">Expense per Acre (₵):</label>
-                            <input type="number" id="expense-per-acre" min="0" step="0.01" required>
+                            <input type="number" id="expense-per-acre" name="expense-per-acre" min="0" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="rotation-group">Rotation Group:</label>
-                            <select id="rotation-group" required>
+                            <select id="rotation-group" name="rotation-group" required>
                                 <option value="Nightshades">Nightshades</option>
                                 <option value="Leafy Greens">Leafy Greens</option>
                                 <option value="Root Vegetables">Root Vegetables</option>
