@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a comprehensive farm management platform built with Streamlit that provides farmers with three integrated applications for managing their agricultural operations. The platform includes a Farm Planner for crop and field planning, a Management Tracker for operational oversight, and a Revenue Planner for financial analysis. The system is designed as an offline-first solution that stores data locally using JSON files, making it accessible even in areas with limited internet connectivity.
+This is a comprehensive farm management platform built as a Progressive Web App (PWA) that provides farmers with three integrated applications for managing their agricultural operations. The platform includes a Farm Planner for crop and field planning, a Management Tracker for operational oversight, and a Revenue Planner for financial analysis. The system is designed as an offline-first solution that stores data locally using localStorage and service workers, making it accessible even in areas with limited internet connectivity.
 
 ## User Preferences
 
@@ -12,26 +12,27 @@ Color scheme: #345187 (RGB: 52, 81, 135) - Applied throughout the entire app for
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: Streamlit web application framework
-- **Layout Pattern**: Multi-page application with tabbed navigation within each sub-application
-- **State Management**: Streamlit session state for maintaining data across user interactions
-- **UI Components**: Responsive column layouts, forms, and interactive widgets
+- **Framework**: Progressive Web App (PWA) with vanilla HTML, CSS, and JavaScript
+- **Layout Pattern**: Single-page application with view-based navigation between sub-applications
+- **State Management**: LocalStorage for data persistence and JavaScript state management
+- **UI Components**: Responsive CSS Grid/Flexbox layouts, custom forms, and interactive widgets
 
 ### Application Structure
-- **Modular Design**: Three separate applications (farm_planner, management_tracker, revenue_planner) organized as independent modules
-- **Unified Entry Point**: Main dashboard (app.py) serves as the application launcher and navigation hub
-- **Tab-based Navigation**: Each sub-application uses tabs to organize different functional areas
+- **Modular Design**: Three separate applications (farm-planner, management-tracker, revenue-planner) organized as separate HTML pages
+- **Unified Entry Point**: Main dashboard (index.html) serves as the application launcher and navigation hub
+- **View-based Navigation**: JavaScript-powered navigation between different application views
 
 ### Data Storage Architecture
-- **Storage Method**: Local JSON file-based persistence in a `data/` directory
-- **Data Organization**: Separate JSON files for different data types (farm_plans, expenses, equipment, etc.)
-- **Offline-First Design**: No external database dependencies, ensuring functionality without internet connectivity
-- **Session State Integration**: Data loaded into Streamlit session state for real-time manipulation
+- **Storage Method**: Browser LocalStorage for client-side data persistence
+- **Data Organization**: Separate localStorage keys for different data types (farm_plans, expenses, equipment, etc.)
+- **Offline-First Design**: Service worker implementation for offline functionality and asset caching
+- **State Management**: JavaScript objects managing application state with localStorage synchronization
 
 ### Backend Architecture
-- **Utility Layer**: Common functions for input validation, formatting, and user messaging
-- **Database Layer**: JSON file operations abstracted through utility functions
-- **No Server Dependencies**: Pure Python application without external server requirements
+- **Server**: Simple Python HTTP server (simple_server.py) serving static assets
+- **Utility Layer**: JavaScript utility functions for input validation, formatting, and user messaging
+- **Storage Layer**: LocalStorage operations abstracted through utility functions
+- **Minimal Server Dependencies**: Simple HTTP server with no database requirements
 
 ### Key Design Patterns
 - **Separation of Concerns**: Clear separation between UI logic, data persistence, and business logic
@@ -40,19 +41,22 @@ Color scheme: #345187 (RGB: 52, 81, 135) - Applied throughout the entire app for
 
 ## External Dependencies
 
-### Core Framework
-- **Streamlit**: Web application framework for the entire user interface
-- **Pandas**: Data manipulation and analysis for handling farm data structures
+### Core Technologies
+- **HTML5**: Modern web standards for structure and semantic markup
+- **CSS3**: Responsive design, Grid, and Flexbox for layout and styling
+- **JavaScript (ES6+)**: Application logic, state management, and DOM manipulation
+- **Service Workers**: PWA functionality for offline caching and background sync
 
-### Standard Library Dependencies
-- **json**: Data serialization for local file storage
-- **os**: File system operations for data directory management
-- **datetime**: Date and time handling for scheduling and tracking features
-- **typing**: Type hints for better code maintainability
+### Python Server Dependencies
+- **Python 3**: Simple HTTP server implementation
+- **http.server**: Built-in Python module for serving static files
+- **socketserver**: TCP server for handling HTTP requests
 
-### File System Requirements
-- **Local Storage**: Requires write permissions to create and manage `data/` directory
-- **JSON Files**: Individual files for each data type (farm_plans.json, expenses.json, etc.)
+### Browser APIs
+- **LocalStorage**: Client-side data persistence
+- **Service Worker API**: Offline functionality and caching
+- **Web App Manifest**: PWA installation and configuration
+- **Cache API**: Offline asset storage and management
 
 ### No External Services
 - **Offline Operation**: No internet connectivity required for core functionality

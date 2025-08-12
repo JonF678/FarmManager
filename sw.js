@@ -10,7 +10,7 @@ const CACHE_URLS = [
     './app.js',
     './style.css',
     './manifest.json',
-    './logo.png',
+    './assets/logo.svg',
     // Chart.js from CDN - cache for offline use
     'https://cdn.jsdelivr.net/npm/chart.js'
 ];
